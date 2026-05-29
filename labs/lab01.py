@@ -14,13 +14,27 @@
 import random
 
 
+def array_length(arr: list) -> int:
+    count = 0
+    for _ in arr:
+        count += 1
+    return count
+
+
 def generate_array(size: int) -> list[int]:
-    return [random.randint(1, 100) for _ in range(size)]
+    result = []
+    i = 0
+    while i < size:
+        result.append(random.randint(1, 100))
+        i += 1
+    return result
 
 
 def print_array(arr: list[int]) -> None:
-    for i in range(len(arr)):
+    i = 0
+    while i < array_length(arr):
         print(f"[{i}] = {arr[i]}")
+        i += 1
 
 
 def custom_max_index(arr: list[int]) -> int:
@@ -28,10 +42,12 @@ def custom_max_index(arr: list[int]) -> int:
         raise ValueError("Массив пуст, невозможно найти максимальный элемент.")
     m = arr[0]
     idx = 0
-    for x in range(1, len(arr)):
+    x = 1
+    while x < array_length(arr):
         if arr[x] > m:
             m = arr[x]
             idx = x
+        x += 1
     return idx
 
 
@@ -57,7 +73,7 @@ class Stack:
         self._data: list = []
 
     def is_empty(self) -> bool:
-        return len(self._data) == 0
+        return array_length(self._data) == 0
 
     def push(self, value) -> None:
         self._data.append(value)
@@ -70,18 +86,20 @@ class Stack:
     def peek(self):
         if self.is_empty():
             raise IndexError("Стек пуст, невозможно получить вершину.")
-        return self._data[-1]
+        return self._data[array_length(self._data) - 1]
 
     def print_stack(self) -> None:
         if self.is_empty():
             print("Стек пуст.")
             return
-        for i in range(len(self._data) - 1, -1, -1):
+        i = array_length(self._data) - 1
+        while i >= 0:
             print(self._data[i])
+            i -= 1
 
 
 def main() -> None:
-    arr = generate_array(30)
+    arr = generate_array(10)
     print("=" * 30)
     print("Массив по индексам:")
     print_array(arr)
