@@ -14,6 +14,8 @@
 
 import random
 
+from labs.common import custom_range
+
 
 class Node:
     def __init__(self, value: int) -> None:
@@ -176,7 +178,7 @@ class BinaryTree:
 
         rows = height * 2 - 1
         width = max(center(n) for n in positions) + margin + 1
-        grid = [[" "] * width for _ in range(rows)]
+        grid = [[" "] * width for _ in custom_range(rows)]
 
         for node, (_, depth) in positions.items():
             label = str(node.value)
@@ -200,7 +202,7 @@ def main() -> None:
     # Связанный список
     print("=" * 30)
     print("Связанный список (случайные значения):")
-    list_values = random.sample(range(1, 100), 7)
+    list_values = random.sample(custom_range(1, 100), 7)
     print("Сгенерировано:", list_values)
     ll = LinkedList()
     for v in list_values:
@@ -214,7 +216,7 @@ def main() -> None:
     # Очередь
     print("=" * 30)
     print("Очередь (случайные значения):")
-    queue_values = random.sample(range(1, 100), 4)
+    queue_values = random.sample(custom_range(1, 100), 4)
     print("Сгенерировано:", queue_values)
     q = Queue()
     print("Пустая?", q.is_empty())
@@ -229,7 +231,7 @@ def main() -> None:
 
     # Бинарное дерево
     print("=" * 30)
-    tree_values = random.sample(range(1, 100), 7)
+    tree_values = random.sample(custom_range(1, 100), 7)
     print("Случайные значения для дерева:", tree_values)
 
     print("-" * 30)

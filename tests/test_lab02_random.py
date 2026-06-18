@@ -3,7 +3,7 @@ import random
 
 import pytest
 
-from labs.lab02_random import BinaryTree, LinkedList, Queue
+from labs.lab02_random import BinaryTree, LinkedList, Queue, custom_range, main
 
 
 # ─── helpers ─────────────────────────────────────────────────────────────────
@@ -45,6 +45,35 @@ def shape(node):
     return (node.value, shape(node.left), shape(node.right))
 
 
+# ─── custom_range ────────────────────────────────────────────────────────────
+
+class TestCustomRange:
+    def test_single_arg_matches_builtin(self):
+        assert custom_range(5) == list(range(5))
+
+    def test_start_stop(self):
+        assert custom_range(1, 100) == list(range(1, 100))
+
+    def test_start_stop_step(self):
+        assert custom_range(1, 10, 2) == list(range(1, 10, 2))
+
+    def test_negative_step(self):
+        assert custom_range(10, 0, -1) == list(range(10, 0, -1))
+
+    def test_empty_when_start_ge_stop(self):
+        assert custom_range(5, 5) == []
+
+    def test_usable_as_random_sample_population(self):
+        # как в main(): random.sample(custom_range(1, 100), 7)
+        population = custom_range(1, 100)
+        assert len(population) == 99
+        assert all(1 <= x <= 99 for x in population)
+
+    def test_zero_step_raises(self):
+        with pytest.raises(ValueError):
+            custom_range(0, 5, 0)
+
+
 # ─── LinkedList ──────────────────────────────────────────────────────────────
 
 class TestLinkedList:
@@ -76,6 +105,18 @@ class TestLinkedList:
         ll.add(1)
         ll.remove(99)
         assert list_values(ll) == [1]
+
+    def test_remove_from_empty_does_not_raise(self):
+        ll = LinkedList()
+        ll.remove(1)
+        assert ll.head is None
+
+    def test_remove_tail(self):
+        ll = LinkedList()
+        for v in [1, 2, 3]:
+            ll.add(v)
+        ll.remove(3)
+        assert list_values(ll) == [1, 2]
 
     def test_print_list_output(self, capsys):
         ll = LinkedList()
@@ -118,6 +159,14 @@ class TestQueue:
     def test_peek_empty_raises(self):
         with pytest.raises(IndexError):
             Queue().peek()
+
+    def test_print_queue_order(self, capsys):
+        q = Queue()
+        for v in [10, 20, 30]:
+            q.enqueue(v)
+        q.print_queue()
+        lines = capsys.readouterr().out.strip().splitlines()
+        assert lines == ["10", "20", "30"]
 
     def test_print_empty_queue(self, capsys):
         Queue().print_queue()
@@ -206,3 +255,12 @@ class TestBuildBalanced:
         output = capsys.readouterr().out
         for v in values:
             assert str(v) in output
+
+
+class TestMain:
+    def test_runs_and_prints(self, capsys):
+        main()
+        output = capsys.readouterr().out
+        assert "Связанный список" in output
+        assert "Очередь" in output
+        assert "сбалансированное" in output.lower()

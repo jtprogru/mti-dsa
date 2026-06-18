@@ -20,30 +20,7 @@
    перестановок.
 """
 
-import random
-
-
-def array_length(arr: list) -> int:
-    count = 0
-    for _ in arr:
-        count += 1
-    return count
-
-
-def generate_array(size: int) -> list[int]:
-    result = []
-    i = 0
-    while i < size:
-        result.append(random.randint(1, 100))
-        i += 1
-    return result
-
-
-def print_array(arr: list[int]) -> None:
-    i = 0
-    while i < array_length(arr):
-        print(f"[{i}] = {arr[i]}")
-        i += 1
+from labs.common import array_length, generate_array, print_array
 
 
 def get_min_element(arr: list[int]) -> int:

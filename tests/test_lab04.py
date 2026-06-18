@@ -1,6 +1,8 @@
 import pytest
 
 from labs.lab04 import (
+    _read_int,
+    array_length,
     binary_search,
     binary_search_sorted,
     build_sorted_sequence,
@@ -10,8 +12,17 @@ from labs.lab04 import (
     linear_contains,
     linear_count,
     linear_first_index,
+    main,
+    menu,
     print_array,
+    read_sorted_sequence,
 )
+
+
+def feed_input(monkeypatch, values):
+    """Подменяет input() последовательностью значений."""
+    inputs = iter(values)
+    monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
 
 
 class TestGenerateArray:
@@ -188,3 +199,111 @@ class TestBuildSortedSequence:
     def test_matches_builtin_on_random(self):
         arr = generate_array(50)
         assert build_sorted_sequence(arr) == sorted(arr)
+
+
+class TestArrayLength:
+    def test_empty(self):
+        assert array_length([]) == 0
+
+    def test_non_empty(self):
+        assert array_length([1, 2, 3]) == 3
+
+    def test_single(self):
+        assert array_length([42]) == 1
+
+
+class TestReadInt:
+    def test_reads_valid_int(self, monkeypatch):
+        monkeypatch.setattr("builtins.input", lambda _="": "42")
+        assert _read_int("prompt") == 42
+
+    def test_strips_whitespace(self, monkeypatch):
+        monkeypatch.setattr("builtins.input", lambda _="": "  7  ")
+        assert _read_int("prompt") == 7
+
+    def test_negative_int(self, monkeypatch):
+        monkeypatch.setattr("builtins.input", lambda _="": "-5")
+        assert _read_int("prompt") == -5
+
+    def test_retries_until_valid(self, monkeypatch, capsys):
+        inputs = iter(["abc", "1.5", "9"])
+        monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
+        assert _read_int("prompt") == 9
+        # на каждый невалидный ввод печатается подсказка
+        assert capsys.readouterr().out.count("Это не целое число") == 2
+
+
+class TestReadSortedSequence:
+    def test_sorts_input(self, monkeypatch):
+        inputs = iter(["5", "2", "9", "1", "7"])
+        monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
+        assert read_sorted_sequence(5) == [1, 2, 5, 7, 9]
+
+    def test_already_sorted_input(self, monkeypatch):
+        inputs = iter(["1", "2", "3"])
+        monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
+        assert read_sorted_sequence(3) == [1, 2, 3]
+
+    def test_with_duplicates(self, monkeypatch):
+        inputs = iter(["3", "1", "3", "2"])
+        monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
+        assert read_sorted_sequence(4) == [1, 2, 3, 3]
+
+    def test_invalid_input_is_retried(self, monkeypatch, capsys):
+        # "foo" не считается за число и не уменьшает счётчик оставшихся
+        inputs = iter(["foo", "2", "1"])
+        monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
+        assert read_sorted_sequence(2) == [1, 2]
+        assert "Это не целое число" in capsys.readouterr().out
+
+    def test_shows_running_sequence(self, monkeypatch, capsys):
+        inputs = iter(["3", "1", "2"])
+        monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
+        read_sorted_sequence(3)
+        output = capsys.readouterr().out
+        # после каждого ввода печатается текущее отсортированное состояние
+        assert "[3]" in output
+        assert "[1, 3]" in output
+        assert "[1, 2, 3]" in output
+
+    def test_default_count_consumes_ten(self, monkeypatch):
+        inputs = iter([str(v) for v in range(10, 0, -1)])
+        monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
+        assert read_sorted_sequence() == [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+
+class TestMenu:
+    def test_all_options_then_exit(self, monkeypatch, capsys):
+        feed_input(
+            monkeypatch,
+            [
+                # сначала делаем массив детерминированным: [1..10]
+                "3", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                "1", "5",                # поиск перебором + искомое число
+                "2", "5",                # бинарный поиск: элемент найден
+                "2", "99",               # бинарный поиск: элемент не найден
+                "4", "5",                # поиск во введённой: найден
+                "4", "99",               # поиск во введённой: не найден
+                "5",                     # новый массив
+                "x",                     # неизвестный пункт
+                "0",                     # выход
+            ],
+        )
+        menu()
+        output = capsys.readouterr().out
+        assert "Итоговая отсортированная последовательность" in output
+        assert "Содержится" in output
+        assert "Элемент найден на индексе" in output
+        assert "Элемент не найден" in output
+        assert "Неизвестный пункт" in output
+        assert "Выход" in output
+
+    def test_exit_immediately(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        menu()
+        assert "Выход" in capsys.readouterr().out
+
+    def test_main_delegates_to_menu(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        main()
+        assert "Выход" in capsys.readouterr().out

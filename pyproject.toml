@@ -1,5 +1,5 @@
 [project]
-name = "mti-algos"
+name = "mti-dsa"
 version = "0.1.0"
 description = "Лабораторные работы по предмету Алгоритмы и структуры данных"
 readme = "README.md"
@@ -7,12 +7,16 @@ requires-python = ">=3.14"
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest>=9.0.3"]
-docs = [
-    "mkdocs>=1.6",
-    "mkdocs-material>=9.5",
-]
+dev = ["pytest>=9.0.3", "pytest-cov>=7.1.0"]
+docs = ["mkdocs>=1.6", "mkdocs-material>=9.5"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+
+[tool.coverage.run]
+source = ["labs"]
+
+[tool.coverage.report]
+show_missing = true
+exclude_lines = ["if __name__ == .__main__.:"]

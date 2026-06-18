@@ -17,6 +17,9 @@
 """
 
 
+from labs.common import custom_range
+
+
 class Node:
     def __init__(self, value: int) -> None:
         self.value: int = value
@@ -159,7 +162,7 @@ class BinaryTree:
 
         rows = height * 2 - 1
         width = max(center(n) for n in positions) + margin + 1
-        grid = [[" "] * width for _ in range(rows)]
+        grid = [[" "] * width for _ in custom_range(rows)]
 
         for node, (_, depth) in positions.items():
             label = str(node.value)

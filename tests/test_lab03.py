@@ -7,12 +7,20 @@ from labs.lab03 import (
     get_index_min_element,
     get_min_element,
     insertion_sort,
+    main,
+    menu,
     print_array,
     print_comparison,
     quick_sort,
     selection_sort,
     selection_sort_with_min,
 )
+
+
+def feed_input(monkeypatch, values):
+    """Подменяет input() последовательностью значений."""
+    inputs = iter(values)
+    monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
 
 SORTERS = [
     selection_sort,
@@ -158,6 +166,16 @@ class TestSwapCounters:
         _, swaps = bubble_sort(arr)
         assert swaps == 10
 
+    def test_quick_sort_no_swaps_when_sorted(self):
+        # уже отсортированный массив (схема Ломуто, опорный — последний):
+        # ни один обмен не нужен
+        _, swaps = quick_sort([1, 2, 3, 4, 5])
+        assert swaps == 0
+
+    def test_quick_sort_swaps_are_nonnegative(self):
+        _, swaps = quick_sort([3, 1, 2, 5, 4])
+        assert swaps >= 0
+
 
 class TestCompareSwaps:
     def test_keys_present(self):
@@ -178,3 +196,25 @@ class TestCompareSwaps:
         output = capsys.readouterr().out
         assert "Вывод" in output
         assert "перестановок" in output
+
+
+class TestMenu:
+    def test_all_options_then_exit(self, monkeypatch, capsys):
+        # 1-5 — сортировки, 6 — сравнение, 7 — новый массив, x — неизвестный, 0 — выход
+        feed_input(monkeypatch, ["1", "2", "3", "4", "5", "6", "7", "x", "0"])
+        menu()
+        output = capsys.readouterr().out
+        assert "Сортировка выбором" in output
+        assert "Быстрая сортировка" in output
+        assert "Неизвестный пункт" in output
+        assert "Выход" in output
+
+    def test_exit_immediately(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        menu()
+        assert "Выход" in capsys.readouterr().out
+
+    def test_main_delegates_to_menu(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        main()
+        assert "Выход" in capsys.readouterr().out

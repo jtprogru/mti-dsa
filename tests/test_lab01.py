@@ -1,6 +1,14 @@
 import pytest
 
-from labs.lab01 import Stack, calculate_total_sum, custom_max, custom_max_index, generate_array, print_array
+from labs.lab01 import Stack, calculate_total_sum, custom_max, custom_max_index, generate_array, main, print_array
+
+
+class TestMain:
+    def test_runs_and_prints(self, capsys):
+        main()
+        output = capsys.readouterr().out
+        assert "Максимум" in output
+        assert "Вершина стека" in output
 
 
 class TestCustomMax:

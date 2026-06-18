@@ -1,6 +1,45 @@
 import pytest
 
-from labs.lab02 import BinaryTree, LinkedList, Queue
+from labs.lab02 import BinaryTree, LinkedList, Queue, custom_range, main
+
+
+class TestMain:
+    def test_runs_and_prints(self, capsys):
+        main()
+        output = capsys.readouterr().out
+        assert "Связанный список" in output
+        assert "Очередь" in output
+        assert "дерево" in output.lower()
+
+
+# ─── custom_range ────────────────────────────────────────────────────────────
+
+class TestCustomRange:
+    def test_single_arg_matches_builtin(self):
+        assert custom_range(5) == list(range(5))
+
+    def test_single_arg_zero_is_empty(self):
+        assert custom_range(0) == []
+
+    def test_start_stop(self):
+        assert custom_range(2, 7) == list(range(2, 7))
+
+    def test_start_stop_step(self):
+        assert custom_range(1, 10, 2) == list(range(1, 10, 2))
+
+    def test_negative_step(self):
+        assert custom_range(10, 0, -1) == list(range(10, 0, -1))
+
+    def test_empty_when_start_ge_stop(self):
+        assert custom_range(5, 5) == []
+        assert custom_range(7, 3) == []
+
+    def test_returns_list(self):
+        assert isinstance(custom_range(3), list)
+
+    def test_zero_step_raises(self):
+        with pytest.raises(ValueError):
+            custom_range(0, 5, 0)
 
 
 # ─── helpers ─────────────────────────────────────────────────────────────────
