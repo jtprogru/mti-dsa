@@ -46,6 +46,7 @@ nav:
   - lab02_random — баланс: lab02_random.md
   - lab03 — сортировки: lab03.md
   - lab04 — поиск: lab04.md
+  - lab05 — hash map: lab05.md
 
 markdown_extensions:
   - admonition
