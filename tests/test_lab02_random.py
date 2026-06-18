@@ -3,7 +3,7 @@ import random
 
 import pytest
 
-from labs.lab02_random import BinaryTree, LinkedList, Queue, custom_range, main
+from labs.lab02_random import BinaryTree, LinkedList, Queue, main
 
 
 # ─── helpers ─────────────────────────────────────────────────────────────────
@@ -45,33 +45,7 @@ def shape(node):
     return (node.value, shape(node.left), shape(node.right))
 
 
-# ─── custom_range ────────────────────────────────────────────────────────────
-
-class TestCustomRange:
-    def test_single_arg_matches_builtin(self):
-        assert custom_range(5) == list(range(5))
-
-    def test_start_stop(self):
-        assert custom_range(1, 100) == list(range(1, 100))
-
-    def test_start_stop_step(self):
-        assert custom_range(1, 10, 2) == list(range(1, 10, 2))
-
-    def test_negative_step(self):
-        assert custom_range(10, 0, -1) == list(range(10, 0, -1))
-
-    def test_empty_when_start_ge_stop(self):
-        assert custom_range(5, 5) == []
-
-    def test_usable_as_random_sample_population(self):
-        # как в main(): random.sample(custom_range(1, 100), 7)
-        population = custom_range(1, 100)
-        assert len(population) == 99
-        assert all(1 <= x <= 99 for x in population)
-
-    def test_zero_step_raises(self):
-        with pytest.raises(ValueError):
-            custom_range(0, 5, 0)
+# custom_range живёт в labs/common и тестируется в tests/test_common.py.
 
 
 # ─── LinkedList ──────────────────────────────────────────────────────────────
