@@ -34,14 +34,16 @@ cov: py-cov go-cov ## Покрытие всех тестов (Python + Go)
 py-cov: ## Python-покрытие (pytest --cov, как в CI)
 	$(UV) run pytest --cov --cov-report=term-missing
 
-go-cov: ## Go-покрытие: итоговый процент statements по каждому модулю
-	@for m in $(GO_MODULES); do \
-		printf '==> %-22s ' "$$m"; \
-		( cd $$m && go test -coverprofile=cover.out ./... >/dev/null 2>&1 \
-			&& go tool cover -func=cover.out | awk 'END {print $$NF}'; \
-			st=$$?; rm -f cover.out; exit $$st ) \
-		|| { echo "FAIL (см. make go-test)"; exit 1; }; \
-	done
+go-cov: ## Go-покрытие: таблица по файлам с подытогами по модулям (как pytest --cov)
+	@profile=$$(mktemp); echo 'mode: set' > $$profile; \
+	for m in $(GO_MODULES); do \
+		out=$$(mktemp); \
+		( cd $$m && go test -coverprofile="$$out" ./... >/dev/null 2>&1 ) \
+			|| { echo "FAIL в $$m (см. make go-test)"; rm -f "$$profile" "$$out"; exit 1; }; \
+		grep -v '^mode:' "$$out" >> $$profile; rm -f "$$out"; \
+	done; \
+	awk -f scripts/go-coverage.awk "$$profile"; \
+	rm -f "$$profile"
 
 py-run: ## Запустить Python-лабораторную (make py-run lab01) или показать список (make py-run)
 ifeq ($(RUN_ARGS),)
