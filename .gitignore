@@ -2,3 +2,5 @@
 .venv/
 site/
 .coverage
+MIGRATION_PLAN.md
+MIGRATION_CHECKLIST.md

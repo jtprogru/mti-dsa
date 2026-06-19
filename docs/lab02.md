@@ -354,3 +354,69 @@ def in_order(node):
 ```
 
 Этот код **общий для lab02 и lab02_random**. Самописный `custom_range` (вместо запрещённого `range`) берётся из общего пакета — см. [common](common.md).
+
+---
+
+## Где это в проде
+
+Эти три структуры — фундамент, на котором стоят системы, которые инженер эксплуатирует:
+
+- **Связный список.** Список свободных блоков в аллокаторах памяти, цепочки бакетов в hash map ([lab05](lab05.md)), двусвязный список «свежести» в LRU-кэше ([lab08](lab08.md)), intrusive-списки в ядре Linux (`list_head`). Везде, где элементы часто вставляют и удаляют в середине, а доступ по индексу не нужен.
+- **Очередь (FIFO).** Очереди задач у worker-пулов, буферизация входящих запросов, очереди сообщений (Kafka, RabbitMQ, SQS — концептуально это та же FIFO с гарантиями доставки). Канал в Go (`chan`) — по сути потокобезопасная очередь. Тот же FIFO — в обходе графа в ширину ([lab06](lab06.md)).
+- **Дерево поиска (BST).** Прямое развитие идеи — **B-tree / B+-tree**, на которых построены индексы БД (PostgreSQL, MySQL): тот же принцип «меньше — влево, больше — вправо», но узел хранит не одно значение, а целую страницу диска, чтобы минимизировать обращения к медленному носителю. Упорядоченное хранение по ключу (`std::map` в C++, `sortedcontainers` в Python) и иерархии вроде дерева каталогов ФС — тоже отсюда.
+
+---
+
+## Параллельная реализация на Go
+
+Связный список, очередь и BST реализованы на Go в пакете [`src/golang/dsa/lab02`](https://github.com/jtprogru/dsa-for-ops/tree/main/src/golang/dsa/lab02). ASCII-визуализация дерева заменена методом-обходом `InOrder()` (для BST он даёт значения по возрастанию — это удобно тестировать). Ниже — вставка в дерево поиска: меньшие значения уходят влево, остальные (`>=`) — вправо.
+
+=== "Python"
+
+    ```python
+    def add(self, value: int) -> None:
+        new_node = TreeNode(value)
+        if self.root is None:
+            self.root = new_node
+            return
+        current = self.root
+        while True:
+            if value < current.value:
+                if current.left is None:
+                    current.left = new_node
+                    return
+                current = current.left
+            else:
+                if current.right is None:
+                    current.right = new_node
+                    return
+                current = current.right
+    ```
+
+=== "Go"
+
+    ```go
+    func (t *BinaryTree) Add(value int) {
+        node := &TreeNode{Value: value}
+        if t.Root == nil {
+            t.Root = node
+            return
+        }
+        current := t.Root
+        for {
+            if value < current.Value {
+                if current.Left == nil {
+                    current.Left = node
+                    return
+                }
+                current = current.Left
+            } else {
+                if current.Right == nil {
+                    current.Right = node
+                    return
+                }
+                current = current.Right
+            }
+        }
+    }
+    ```

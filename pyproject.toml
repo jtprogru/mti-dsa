@@ -1,14 +1,19 @@
 [project]
-name = "mti-dsa"
+name = "dsa-for-ops"
 version = "0.1.0"
-description = "Лабораторные работы по предмету Алгоритмы и структуры данных"
+description = "Структуры данных и алгоритмы (Python и Go), основы программирования и трек Go — база для будущих SRE/DevOps"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = []
 
 [dependency-groups]
 dev = ["pytest>=9.0.3", "pytest-cov>=7.1.0"]
-docs = ["mkdocs>=1.6", "mkdocs-material>=9.5"]
+docs = [
+    "mkdocs>=1.6",
+    "mkdocs-material>=9.5",
+    "mkdocs-mermaid2-plugin>=1.1",
+    "mkdocs-git-revision-date-localized-plugin>=1.2",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

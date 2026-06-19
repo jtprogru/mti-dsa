@@ -121,3 +121,56 @@ def build_sorted_sequence(values: list[int]) -> list[int]:
 | 0     | Выход                                                             |
 
 Пункт 3 заменяет текущий массив введённой отсортированной последовательностью, после чего пункт 4 (бинарный поиск) корректно по ней работает.
+
+---
+
+## Где это в проде
+
+Линейный поиск — это «прогрепать как есть», бинарный — «сначала отсортируй/проиндексируй, потом ищи дёшево»:
+
+- **Бинарный поиск под капотом стандартных инструментов.** `bisect` в Python, `sort.Search` / `slices.BinarySearch` в Go, поиск по индексу БД (B-tree — это обобщение бинарного поиска на дерево), поиск ключа в отсортированных SSTable у LSM-движков (Cassandra, RocksDB, ClickHouse). `git bisect` — буквально бинарный поиск по истории коммитов в поисках того, что сломало сборку.
+- **Главный размен — индекс.** Бинарный поиск требует отсортированных данных, а сортировка стоит O(n log n). Поэтому его применяют, когда искать будут **многократно**: платим за сортировку/построение индекса один раз, дальше каждый поиск — O(log n) вместо O(n). Это ровно причина, по которой БД строят индексы заранее, а не сканируют таблицу на каждый запрос (index scan против seq scan в плане).
+
+---
+
+## Параллельная реализация на Go
+
+Линейный и бинарный поиск реализованы на Go в пакете [`src/golang/dsa/lab04`](https://github.com/jtprogru/dsa-for-ops/tree/main/src/golang/dsa/lab04). Как и в Python, `BinarySearchSorted` сортирует копию входа сортировкой вставками из пакета `lab03` и затем ищет. Ниже — сам бинарный поиск.
+
+=== "Python"
+
+    ```python
+    def binary_search(arr: list[int], target: int) -> int:
+        low = 0
+        high = array_length(arr) - 1
+        while low <= high:
+            mid = (low + high) // 2
+            if arr[mid] == target:
+                return mid
+            if arr[mid] < target:
+                low = mid + 1
+            else:
+                high = mid - 1
+        return -1
+    ```
+
+=== "Go"
+
+    ```go
+    func BinarySearch(arr []int, target int) int {
+        low := 0
+        high := len(arr) - 1
+        for low <= high {
+            mid := (low + high) / 2
+            switch {
+            case arr[mid] == target:
+                return mid
+            case arr[mid] < target:
+                low = mid + 1
+            default:
+                high = mid - 1
+            }
+        }
+        return -1
+    }
+    ```

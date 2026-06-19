@@ -1,0 +1,51 @@
+name: go
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/golang/**"
+      - ".github/workflows/go.yml"
+  pull_request:
+    paths:
+      - "src/golang/**"
+      - ".github/workflows/go.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: go-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  go:
+    name: Go build, vet & test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module:
+          - src/golang/basics
+          - src/golang/advanced
+          - src/golang/dsa
+    defaults:
+      run:
+        working-directory: ${{ matrix.module }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.23"
+          cache: false
+
+      - name: Build
+        run: go build ./...
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test -race ./...

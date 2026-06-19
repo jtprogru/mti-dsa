@@ -1,10 +1,10 @@
-site_name: mti-dsa — Алгоритмы и структуры данных
-site_description: Лабораторные работы и конспект по алгоритмам и структурам данных
+site_name: dsa-for-ops — Алгоритмы, программирование и Go для SRE/DevOps
+site_description: Структуры данных и алгоритмы (Python и Go), основы программирования и трек Go — база для будущих SRE/DevOps
 site_author: Mikhail Savin
-site_url: https://jtprogru.github.io/mti-dsa/
+site_url: https://jtprogru.github.io/dsa-for-ops/
 
-repo_name: jtprogru/mti-dsa
-repo_url: https://github.com/jtprogru/mti-dsa
+repo_name: jtprogru/dsa-for-ops
+repo_url: https://github.com/jtprogru/dsa-for-ops
 edit_uri: edit/main/docs/
 
 docs_dir: docs
@@ -30,6 +30,8 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
+    - navigation.tabs
+    - navigation.indexes
     - navigation.top
     - navigation.footer
     - toc.follow
@@ -39,32 +41,151 @@ theme:
 
 nav:
   - Главная: index.md
-  - Конспект: notes.md
-  - common — общие утилиты: common.md
-  - lab01 — массив и стек: lab01.md
-  - lab02 — список, очередь, дерево: lab02.md
-  - lab02_random — баланс: lab02_random.md
-  - lab03 — сортировки: lab03.md
-  - lab04 — поиск: lab04.md
-  - lab05 — hash map: lab05.md
+  - DSA:
+      - dsa.md
+      - Конспект: notes.md
+      - Дорожная карта: roadmap.md
+      - common — общие утилиты: common.md
+      - "Академические лабы (lab01–05)":
+          - lab01 — массив и стек: lab01.md
+          - lab02 — список, очередь, дерево: lab02.md
+          - lab02_random — баланс дерева: lab02_random.md
+          - lab03 — сортировки: lab03.md
+          - lab04 — поиск: lab04.md
+          - lab05 — hash map: lab05.md
+      - "Прикладные лабы (lab00, lab06–11)":
+          - lab00 — Python для эксплуатации: lab00.md
+          - lab06 — графы и топосортировка: lab06.md
+          - lab07 — куча и top-K: lab07.md
+          - lab08 — LRU-кэш: lab08.md
+          - lab09 — rate limiting: lab09.md
+          - lab10 — разбор логов: lab10.md
+          - lab11 — consistent hashing и bloom: lab11.md
+  - Основы:
+      - "Тема 1. Алгоритмизация":
+          - foundations/01-algorithm-basics/index.md
+          - "Лекция 1. Основные понятия": foundations/01-algorithm-basics/lecture-01-basics.md
+          - "Лекция 2. Алгоритмические конструкции": foundations/01-algorithm-basics/lecture-02-constructs.md
+          - "Лекции 3–4. Логические основы": foundations/01-algorithm-basics/lecture-03-logic.md
+      - "Тема 2. Языки и методы":
+          - foundations/02-languages-and-methods/index.md
+          - "Лекция 1. Языки и системы программирования": foundations/02-languages-and-methods/lecture-01-languages.md
+          - "Лекция 2. Методы программирования и SDLC": foundations/02-languages-and-methods/lecture-02-methods.md
+      - "Тема 3. Python — основы":
+          - foundations/03-python-basics/index.md
+          - "Лекция 1. Синтаксис и типы данных": foundations/03-python-basics/lecture-01-syntax-types.md
+          - "Лекция 2. Управляющие конструкции и I/O": foundations/03-python-basics/lecture-02-control-flow-io.md
+          - "Лекция 3. Коллекции": foundations/03-python-basics/lecture-03-collections.md
+          - "Лекция 4. Кодировки, байты, машинное представление": foundations/03-python-basics/lecture-04-encodings-bytes.md
+      - "Тема 4. Процедуры и файлы":
+          - foundations/04-procedures-and-files/index.md
+          - "Лекция 1. Функции и область видимости": foundations/04-procedures-and-files/lecture-01-functions.md
+          - "Лекция 2. Строки и рекурсия": foundations/04-procedures-and-files/lecture-02-strings-recursion.md
+          - "Лекция 3. Работа с файлами": foundations/04-procedures-and-files/lecture-03-files.md
+          - "Лекция 4. Бинарные файлы и произвольный доступ": foundations/04-procedures-and-files/lecture-04-binary-random-access.md
+      - "Тема 5. Библиотеки и модули":
+          - foundations/05-libraries-and-modules/index.md
+          - "Лекция 1. Модули, пакеты и зависимости": foundations/05-libraries-and-modules/lecture-01-modules-packages.md
+      - "Тема 6. ООП":
+          - foundations/06-oop-principles/index.md
+          - "Лекция 1. Базовые понятия ООП": foundations/06-oop-principles/lecture-01-oop-basics.md
+          - "Лекция 2. Событийная модель и компоненты": foundations/06-oop-principles/lecture-02-event-driven.md
+          - "Лекция 3. SOLID-принципы": foundations/06-oop-principles/lecture-03-solid.md
+      - "Тема 7. VS Code":
+          - foundations/07-ide-vscode/index.md
+          - "Лекция 1. VS Code: установка и настройка": foundations/07-ide-vscode/lecture-01-setup.md
+          - "Лекция 2. Параметры командной строки": foundations/07-ide-vscode/lecture-02-cli-args.md
+          - "Лекция 3. Ошибки, исключения, декораторы": foundations/07-ide-vscode/lecture-03-errors-decorators.md
+      - "Тема 8. Этапы разработки":
+          - foundations/08-app-development-stages/index.md
+          - "Лекция 1. GUI на Tkinter": foundations/08-app-development-stages/lecture-01-tkinter.md
+          - "Лекция 2. GUI на PyQt и Qt Designer": foundations/08-app-development-stages/lecture-02-pyqt.md
+          - "Лекция 3. Web-обёртка как UI": foundations/08-app-development-stages/lecture-03-web-ui.md
+      - "Тема 9. Иерархия классов":
+          - foundations/09-class-hierarchies/index.md
+          - "Лекция 1. Стандартная библиотека": foundations/09-class-hierarchies/lecture-01-stdlib.md
+          - "Лекция 2. Шаблоны проектирования": foundations/09-class-hierarchies/lecture-02-patterns.md
+  - Эксплуатация:
+      - "Тема 10. Стандартные модули":
+          - ops/10-standard-modules/index.md
+          - "Лекция 1. HTTP-клиент и HTTP-сервер": ops/10-standard-modules/lecture-01-http.md
+          - "Лекция 2. Регулярные выражения": ops/10-standard-modules/lecture-02-regex.md
+          - "Лекция 3. SQLite": ops/10-standard-modules/lecture-03-sqlite.md
+          - "Лекция 4. Конкурентность и потоки": ops/10-standard-modules/lecture-04-concurrency.md
+      - "Тема 11. Разработка приложений":
+          - ops/11-application-development/index.md
+          - "Лекция 1. Логирование": ops/11-application-development/lecture-01-logging.md
+          - "Лекция 2. Django — основы": ops/11-application-development/lecture-02-django-basics.md
+          - "Лекция 3. Django — формы и API": ops/11-application-development/lecture-03-django-events-api.md
+          - "Лекция 4. Компиляция в standalone": ops/11-application-development/lecture-04-standalone.md
+      - "Тема 12. Качество кода":
+          - ops/12-code-quality-and-testing/index.md
+          - "Лекция 1. Тестирование": ops/12-code-quality-and-testing/lecture-01-testing.md
+          - "Лекция 2. Продвинутое тестирование": ops/12-code-quality-and-testing/lecture-02-advanced-testing.md
+  - Go:
+      - "Тема 13. Go — основы":
+          - go/13-golang-basics/index.md
+          - "Лекция 1. Знакомство с Go": go/13-golang-basics/lecture-01-intro.md
+          - "Лекция 2. Типы и управляющие конструкции": go/13-golang-basics/lecture-02-types-control-flow.md
+          - "Лекция 3. Функции и ошибки": go/13-golang-basics/lecture-03-functions-errors.md
+          - "Лекция 4. Композитные типы": go/13-golang-basics/lecture-04-composite-types.md
+          - "Лекция 5. Методы и интерфейсы": go/13-golang-basics/lecture-05-methods-interfaces.md
+          - "Лекция 6. Пакеты и тестирование": go/13-golang-basics/lecture-06-packages-testing.md
+      - "Тема 14. Go — продвинутый":
+          - go/14-golang-advanced/index.md
+          - "Лекция 1. Конкурентность": go/14-golang-advanced/lecture-01-concurrency.md
+          - "Лекция 2. Context": go/14-golang-advanced/lecture-02-context.md
+          - "Лекция 3. HTTP-клиент и сервер": go/14-golang-advanced/lecture-03-http.md
+          - "Лекция 4. Файлы, JSON, БД": go/14-golang-advanced/lecture-04-files-json-db.md
+          - "Лекция 5. Бенчмарки и pprof": go/14-golang-advanced/lecture-05-benchmarks-pprof.md
+  - Практика:
+      - practice/index.md
+      - "Распределённая система оплаты": practice/practice.md
+      - "Шпаргалка": practice/cheatsheet.md
+      - "Системы контроля версий и Git": practice/version-control.md
+      - "Курсовые лабораторные": labs/index.md
+      - "Экзаменационные билеты": tickets/index.md
 
 markdown_extensions:
   - admonition
   - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
   - tables
   - toc:
       permalink: true
       slugify: !!python/object/apply:pymdownx.slugs.slugify
         kwds:
           case: lower
+  - pymdownx.arithmatex:
+      generic: true
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
-  - pymdownx.superfences
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:mermaid2.fence_mermaid_custom
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 
 plugins:
   - search:
       lang: ru
+  - mermaid2
+  - git-revision-date-localized:
+      type: iso_date
+      fallback_to_build_date: true
