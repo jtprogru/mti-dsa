@@ -3,9 +3,9 @@
 # Команда uv (можно переопределить: make UV=uvx ...)
 UV ?= uv
 # Список доступных лабораторных (имена модулей без расширения), отсортированный
-LABS := $(sort $(patsubst labs/%.py,%,$(wildcard labs/lab*.py)))
-# Имя лабораторной, переданное после `run` (например, `make run lab01`)
-RUN_ARGS := $(filter-out run,$(MAKECMDGOALS))
+LABS := $(sort $(patsubst src/python/labs/%.py,%,$(wildcard src/python/labs/lab*.py)))
+# Имя лабораторной, переданное после `py-run` (например, `make py-run lab01`)
+RUN_ARGS := $(filter-out py-run,$(MAKECMDGOALS))
 # Go-модули (каталоги с go.mod внутри src/golang)
 GO_MODULES := $(sort $(dir $(wildcard src/golang/*/go.mod)))
 
@@ -14,7 +14,7 @@ define go_foreach
 @for m in $(GO_MODULES); do echo "==> $$m"; (cd $$m && $(1)) || exit 1; done
 endef
 
-.PHONY: help sync test py-test cov run clean docs docs-build \
+.PHONY: help sync test py-test py-run cov py-cov go-cov clean docs docs-build \
         go go-build go-vet go-test go-fmt check
 
 help: ## Показать список команд
@@ -29,21 +29,32 @@ test: py-test go-test ## Прогнать все тесты (Python + Go)
 py-test: ## Прогнать Python-тесты (pytest)
 	$(UV) run pytest -v
 
-cov: ## Тесты с отчётом покрытия (как в CI)
+cov: py-cov go-cov ## Покрытие всех тестов (Python + Go)
+
+py-cov: ## Python-покрытие (pytest --cov, как в CI)
 	$(UV) run pytest --cov --cov-report=term-missing
 
-run: ## Запустить лабораторную (make run lab01) или показать список (make run)
+go-cov: ## Go-покрытие: итоговый процент statements по каждому модулю
+	@for m in $(GO_MODULES); do \
+		printf '==> %-22s ' "$$m"; \
+		( cd $$m && go test -coverprofile=cover.out ./... >/dev/null 2>&1 \
+			&& go tool cover -func=cover.out | awk 'END {print $$NF}'; \
+			st=$$?; rm -f cover.out; exit $$st ) \
+		|| { echo "FAIL (см. make go-test)"; exit 1; }; \
+	done
+
+py-run: ## Запустить Python-лабораторную (make py-run lab01) или показать список (make py-run)
 ifeq ($(RUN_ARGS),)
-	@echo "Доступные лабораторные работы:"
+	@echo "Доступные Python-лабораторные работы:"
 	@for lab in $(LABS); do echo "  $$lab"; done
 	@echo ""
-	@echo "Запуск: make run lab01"
+	@echo "Запуск: make py-run lab01"
 else ifeq ($(filter $(RUN_ARGS),$(LABS)),)
 	@echo "Лабораторная '$(RUN_ARGS)' не найдена. Доступные:"
 	@for lab in $(LABS); do echo "  $$lab"; done
 	@exit 1
 else
-	$(UV) run python -m labs.$(RUN_ARGS)
+	PYTHONPATH=src/python $(UV) run python -m labs.$(RUN_ARGS)
 endif
 
 # Перехватываем имена лабораторных, переданные как цели, чтобы make не ругался.
@@ -70,10 +81,11 @@ go-test: ## Прогнать go test по всем Go-модулям
 go-fmt: ## Отформатировать Go-код (gofmt -w) во всех модулях
 	$(call go_foreach,gofmt -w .)
 
-check: cov go docs-build ## Полная проверка перед пушем: покрытие + Go + strict-сборка docs
+check: py-cov go docs-build ## Полная проверка перед пушем: Python-покрытие + Go + strict-сборка docs
 
 clean: ## Удалить кэш и временные файлы
 	find . -type d -name __pycache__ -exec rm -rf {} +
 	find . -type d -name .pytest_cache -exec rm -rf {} +
 	rm -rf site
 	rm -f .coverage coverage.xml junit.xml
+	find src/golang -name cover.out -delete
