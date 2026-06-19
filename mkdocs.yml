@@ -40,28 +40,10 @@ theme:
     - search.highlight
 
 nav:
-  - Главная: index.md
-  - DSA:
-      - dsa.md
-      - Конспект: notes.md
-      - Дорожная карта: roadmap.md
-      - common — общие утилиты: common.md
-      - "Академические лабы (lab01–05)":
-          - lab01 — массив и стек: lab01.md
-          - lab02 — список, очередь, дерево: lab02.md
-          - lab02_random — баланс дерева: lab02_random.md
-          - lab03 — сортировки: lab03.md
-          - lab04 — поиск: lab04.md
-          - lab05 — hash map: lab05.md
-      - "Прикладные лабы (lab00, lab06–11)":
-          - lab00 — Python для эксплуатации: lab00.md
-          - lab06 — графы и топосортировка: lab06.md
-          - lab07 — куча и top-K: lab07.md
-          - lab08 — LRU-кэш: lab08.md
-          - lab09 — rate limiting: lab09.md
-          - lab10 — разбор логов: lab10.md
-          - lab11 — consistent hashing и bloom: lab11.md
-  - Основы:
+  - Старт:
+      - index.md
+      - "Вектор развития курса": roadmap.md
+  - Программирование:
       - "Тема 1. Алгоритмизация":
           - foundations/01-algorithm-basics/index.md
           - "Лекция 1. Основные понятия": foundations/01-algorithm-basics/lecture-01-basics.md
@@ -105,7 +87,6 @@ nav:
           - foundations/09-class-hierarchies/index.md
           - "Лекция 1. Стандартная библиотека": foundations/09-class-hierarchies/lecture-01-stdlib.md
           - "Лекция 2. Шаблоны проектирования": foundations/09-class-hierarchies/lecture-02-patterns.md
-  - Эксплуатация:
       - "Тема 10. Стандартные модули":
           - ops/10-standard-modules/index.md
           - "Лекция 1. HTTP-клиент и HTTP-сервер": ops/10-standard-modules/lecture-01-http.md
@@ -122,6 +103,25 @@ nav:
           - ops/12-code-quality-and-testing/index.md
           - "Лекция 1. Тестирование": ops/12-code-quality-and-testing/lecture-01-testing.md
           - "Лекция 2. Продвинутое тестирование": ops/12-code-quality-and-testing/lecture-02-advanced-testing.md
+  - Структуры данных:
+      - dsa.md
+      - Конспект: notes.md
+      - "Академические лабы (lab01–05)":
+          - lab01 — массив и стек: lab01.md
+          - lab02 — список, очередь, дерево: lab02.md
+          - lab02_random — баланс дерева: lab02_random.md
+          - lab03 — сортировки: lab03.md
+          - lab04 — поиск: lab04.md
+          - lab05 — hash map: lab05.md
+      - "Прикладные лабы (lab00, lab06–11)":
+          - lab00 — Python для эксплуатации: lab00.md
+          - lab06 — графы и топосортировка: lab06.md
+          - lab07 — куча и top-K: lab07.md
+          - lab08 — LRU-кэш: lab08.md
+          - lab09 — rate limiting: lab09.md
+          - lab10 — разбор логов: lab10.md
+          - lab11 — consistent hashing и bloom: lab11.md
+      - "Общие утилиты (common)": common.md
   - Go:
       - "Тема 13. Go — основы":
           - go/13-golang-basics/index.md
@@ -140,11 +140,13 @@ nav:
           - "Лекция 5. Бенчмарки и pprof": go/14-golang-advanced/lecture-05-benchmarks-pprof.md
   - Практика:
       - practice/index.md
-      - "Распределённая система оплаты": practice/practice.md
-      - "Шпаргалка": practice/cheatsheet.md
-      - "Системы контроля версий и Git": practice/version-control.md
-      - "Курсовые лабораторные": labs/index.md
-      - "Экзаменационные билеты": tickets/index.md
+      - Материалы:
+          - "Распределённая система оплаты": practice/practice.md
+          - "Шпаргалка": practice/cheatsheet.md
+          - "Системы контроля версий и Git": practice/version-control.md
+      - Логистика курса:
+          - "Курсовые лабораторные": labs/index.md
+          - "Экзаменационные билеты": tickets/index.md
 
 markdown_extensions:
   - admonition
