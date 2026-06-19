@@ -121,3 +121,47 @@ def build_sorted_sequence(values: list[int]) -> list[int]:
 | 0     | Выход                                                             |
 
 Пункт 3 заменяет текущий массив введённой отсортированной последовательностью, после чего пункт 4 (бинарный поиск) корректно по ней работает.
+
+---
+
+## Параллельная реализация на Go
+
+Линейный и бинарный поиск реализованы на Go в пакете [`src/golang/dsa/lab04`](https://github.com/jtprogru/mti-dsa/tree/main/src/golang/dsa/lab04). Как и в Python, `BinarySearchSorted` сортирует копию входа сортировкой вставками из пакета `lab03` и затем ищет. Ниже — сам бинарный поиск.
+
+=== "Python"
+
+    ```python
+    def binary_search(arr: list[int], target: int) -> int:
+        low = 0
+        high = array_length(arr) - 1
+        while low <= high:
+            mid = (low + high) // 2
+            if arr[mid] == target:
+                return mid
+            if arr[mid] < target:
+                low = mid + 1
+            else:
+                high = mid - 1
+        return -1
+    ```
+
+=== "Go"
+
+    ```go
+    func BinarySearch(arr []int, target int) int {
+        low := 0
+        high := len(arr) - 1
+        for low <= high {
+            mid := (low + high) / 2
+            switch {
+            case arr[mid] == target:
+                return mid
+            case arr[mid] < target:
+                low = mid + 1
+            default:
+                high = mid - 1
+            }
+        }
+        return -1
+    }
+    ```

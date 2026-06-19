@@ -354,3 +354,59 @@ def in_order(node):
 ```
 
 Этот код **общий для lab02 и lab02_random**. Самописный `custom_range` (вместо запрещённого `range`) берётся из общего пакета — см. [common](common.md).
+
+---
+
+## Параллельная реализация на Go
+
+Связный список, очередь и BST реализованы на Go в пакете [`src/golang/dsa/lab02`](https://github.com/jtprogru/mti-dsa/tree/main/src/golang/dsa/lab02). ASCII-визуализация дерева заменена методом-обходом `InOrder()` (для BST он даёт значения по возрастанию — это удобно тестировать). Ниже — вставка в дерево поиска: меньшие значения уходят влево, остальные (`>=`) — вправо.
+
+=== "Python"
+
+    ```python
+    def add(self, value: int) -> None:
+        new_node = TreeNode(value)
+        if self.root is None:
+            self.root = new_node
+            return
+        current = self.root
+        while True:
+            if value < current.value:
+                if current.left is None:
+                    current.left = new_node
+                    return
+                current = current.left
+            else:
+                if current.right is None:
+                    current.right = new_node
+                    return
+                current = current.right
+    ```
+
+=== "Go"
+
+    ```go
+    func (t *BinaryTree) Add(value int) {
+        node := &TreeNode{Value: value}
+        if t.Root == nil {
+            t.Root = node
+            return
+        }
+        current := t.Root
+        for {
+            if value < current.Value {
+                if current.Left == nil {
+                    current.Left = node
+                    return
+                }
+                current = current.Left
+            } else {
+                if current.Right == nil {
+                    current.Right = node
+                    return
+                }
+                current = current.Right
+            }
+        }
+    }
+    ```

@@ -194,3 +194,50 @@ def compare_swaps(arr: list[int]) -> dict[str, int]:
 | 0     | Выход                                             |
 
 Массив хранится между итерациями, поэтому пункты 1–6 работают над одними и теми же данными — сравнение перестановок честное. Пункт 7 заменяет массив новым.
+
+---
+
+## Параллельная реализация на Go
+
+Все четыре сортировки со счётчиком перестановок реализованы на Go в пакете [`src/golang/dsa/lab03`](https://github.com/jtprogru/mti-dsa/tree/main/src/golang/dsa/lab03). Каждая возвращает новый отсортированный срез и число перестановок, не мутируя вход; семантика подсчёта перестановок совпадает с Python (table-driven тесты проверяют это на отсортированном и обратно отсортированном входах). Пример — сортировка вставками.
+
+=== "Python"
+
+    ```python
+    def insertion_sort(arr: list[int]) -> tuple[list[int], int]:
+        result = list(arr)
+        swaps = 0
+        n = array_length(result)
+        i = 1
+        while i < n:
+            key = result[i]
+            j = i - 1
+            while j >= 0 and result[j] > key:
+                result[j + 1] = result[j]
+                swaps += 1
+                j -= 1
+            result[j + 1] = key
+            i += 1
+        return result, swaps
+    ```
+
+=== "Go"
+
+    ```go
+    func InsertionSort(arr []int) ([]int, int) {
+        result := clone(arr)
+        swaps := 0
+        n := len(result)
+        for i := 1; i < n; i++ {
+            key := result[i]
+            j := i - 1
+            for j >= 0 && result[j] > key {
+                result[j+1] = result[j]
+                swaps++
+                j--
+            }
+            result[j+1] = key
+        }
+        return result, swaps
+    }
+    ```

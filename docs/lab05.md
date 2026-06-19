@@ -174,3 +174,43 @@ def _resize(self, new_capacity: int) -> None:
 | 0 | Выход |
 
 Пункт 5 (`demo_collisions`) — прямой ответ на вопрос «что происходит при коллизии»: одни и те же коллизирующие ключи видно в одном бакете у цепочек, разложенными подряд у линейного пробирования и с разным шагом у двойного хеширования.
+
+---
+
+## Параллельная реализация на Go
+
+Обе таблицы (цепочки и открытая адресация с линейным/двойным пробированием) реализованы на Go в пакете [`src/golang/dsa/lab05`](https://github.com/jtprogru/mti-dsa/tree/main/src/golang/dsa/lab05). Ключи и значения — `any` (поддержаны типы `int` и `string`, как в Python).
+
+!!! warning "Подводный камень переноса: знак `%`"
+    В Python `%` всегда возвращает неотрицательный остаток, а в Go — остаток со знаком делимого. Если хеш окажется отрицательным (например, при переполнении), `hash % capacity` в Go может стать отрицательным и сломать индексацию. Поэтому в Go хеш считается **беззнаковым** (`uint64`) — тогда `h % capacity` гарантированно неотрицателен. Полиномиальный хеш строки (база 31, схема Горнера) идёт по рунам, что соответствует `ord()` в Python.
+
+=== "Python"
+
+    ```python
+    def hash_str(key: str) -> int:
+        h = 0
+        for ch in key:
+            h = h * 31 + ord(ch)
+        return h
+
+    # индекс бакета
+    def _index(self, key) -> int:
+        return hash_key(key) % self._capacity
+    ```
+
+=== "Go"
+
+    ```go
+    func HashStr(key string) uint64 {
+        var h uint64
+        for _, ch := range key { // range по строке даёт руны (как ord)
+            h = h*31 + uint64(ch)
+        }
+        return h
+    }
+
+    // индекс бакета: беззнаковый хеш -> неотрицательный остаток
+    func (m *HashMapChaining) index(key any) int {
+        return int(mustHash(key) % uint64(m.capacity))
+    }
+    ```

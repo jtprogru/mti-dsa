@@ -189,3 +189,68 @@ print(stack.peek())   # 20 (новая вершина)
 ```
 
 **Где применяется стек:** отмена действий (Ctrl+Z), проверка скобок, вызовы функций (call stack), обход графа в глубину (DFS).
+
+---
+
+## Параллельная реализация на Go
+
+Те же структуры реализованы на Go в пакете [`src/golang/dsa/lab01`](https://github.com/jtprogru/mti-dsa/tree/main/src/golang/dsa/lab01) (с table-driven тестами в `lab01_test.go`). Отличия от Python: вместо исключений — возврат `error`, а стек обобщён через дженерики (`Stack[T any]`).
+
+=== "Python"
+
+    ```python
+    class Stack:
+        def __init__(self) -> None:
+            self._data: list = []
+
+        def is_empty(self) -> bool:
+            return array_length(self._data) == 0
+
+        def push(self, value) -> None:
+            self._data.append(value)
+
+        def pop(self):
+            if self.is_empty():
+                raise IndexError("Стек пуст.")
+            return self._data.pop()
+
+        def peek(self):
+            if self.is_empty():
+                raise IndexError("Стек пуст.")
+            return self._data[array_length(self._data) - 1]
+    ```
+
+=== "Go"
+
+    ```go
+    type Stack[T any] struct {
+        data []T
+    }
+
+    func (s *Stack[T]) IsEmpty() bool {
+        return ArrayLength(s.data) == 0
+    }
+
+    func (s *Stack[T]) Push(value T) {
+        s.data = append(s.data, value)
+    }
+
+    func (s *Stack[T]) Pop() (T, error) {
+        var zero T
+        if s.IsEmpty() {
+            return zero, ErrEmpty
+        }
+        last := ArrayLength(s.data) - 1
+        value := s.data[last]
+        s.data = s.data[:last]
+        return value, nil
+    }
+
+    func (s *Stack[T]) Peek() (T, error) {
+        var zero T
+        if s.IsEmpty() {
+            return zero, ErrEmpty
+        }
+        return s.data[ArrayLength(s.data)-1], nil
+    }
+    ```
