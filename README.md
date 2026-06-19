@@ -3,6 +3,10 @@
 [![tests](https://github.com/jtprogru/mti-dsa/actions/workflows/tests.yml/badge.svg)](https://github.com/jtprogru/mti-dsa/actions/workflows/tests.yml)
 [![go](https://github.com/jtprogru/mti-dsa/actions/workflows/go.yml/badge.svg)](https://github.com/jtprogru/mti-dsa/actions/workflows/go.yml)
 [![docs](https://github.com/jtprogru/mti-dsa/actions/workflows/docs.yml/badge.svg)](https://github.com/jtprogru/mti-dsa/actions/workflows/docs.yml)
+[![Сайт курса](https://img.shields.io/badge/site-jtprogru.github.io%2Fmti--dsa-2ea44f?logo=github)](https://jtprogru.github.io/mti-dsa/)
+[![MkDocs Material](https://img.shields.io/badge/MkDocs-Material-526CFE?logo=materialformkdocs)](https://squidfunk.github.io/mkdocs-material/)
+[![Python 3.14](https://img.shields.io/badge/Python-3.14-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![Go 1.23](https://img.shields.io/badge/Go-1.23-00ADD8?logo=go&logoColor=white)](https://go.dev/)
 
 База для будущих **SRE / DevOps / Ops**, которые хотят вырасти из bash-скриптов в инженеров-программистов. Репозиторий объединяет три направления: структуры данных и алгоритмы «с нуля» (Python и Go), теоретический курс «Основы алгоритмизации и программирования» и полноценный трек Go.
 
