@@ -89,7 +89,7 @@ go-vet: ## Прогнать go vet по всем Go-модулям
 	$(call go_foreach,go vet ./...)
 
 go-test: ## Прогнать go test по всем Go-модулям
-	$(call go_foreach,go test ./...)
+	$(call go_foreach,go test -v ./...)
 
 go-fmt: ## Отформатировать Go-код (gofmt -w) во всех модулях
 	$(call go_foreach,gofmt -w .)
