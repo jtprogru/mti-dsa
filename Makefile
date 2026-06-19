@@ -14,7 +14,7 @@ define go_foreach
 @for m in $(GO_MODULES); do echo "==> $$m"; (cd $$m && $(1)) || exit 1; done
 endef
 
-.PHONY: help sync test py-test py-run cov py-cov go-cov clean docs docs-build \
+.PHONY: help sync test py-test py-run lint fmt py-newlab cov py-cov go-cov clean docs docs-build \
         go go-build go-vet go-test go-fmt check
 
 help: ## Показать список команд
@@ -28,6 +28,17 @@ test: py-test go-test ## Прогнать все тесты (Python + Go)
 
 py-test: ## Прогнать Python-тесты (pytest)
 	$(UV) run pytest -v
+
+lint: ## Проверить Python-код ruff'ом (как в CI)
+	$(UV) run ruff check src tests scripts
+	$(UV) run ruff format --check src tests scripts
+
+fmt: ## Отформатировать Python-код и отсортировать импорты (ruff)
+	$(UV) run ruff check --fix src tests scripts
+	$(UV) run ruff format src tests scripts
+
+py-newlab: ## Создать следующую лабораторную (labNN.py + тест + docs); можно задать номер: make py-newlab lab15
+	@bash scripts/new-lab.sh $(filter-out py-newlab,$(MAKECMDGOALS))
 
 cov: py-cov go-cov ## Покрытие всех тестов (Python + Go)
 
@@ -83,7 +94,7 @@ go-test: ## Прогнать go test по всем Go-модулям
 go-fmt: ## Отформатировать Go-код (gofmt -w) во всех модулях
 	$(call go_foreach,gofmt -w .)
 
-check: py-cov go docs-build ## Полная проверка перед пушем: Python-покрытие + Go + strict-сборка docs
+check: lint py-cov go docs-build ## Полная проверка перед пушем: ruff + Python-покрытие + Go + strict-сборка docs
 
 clean: ## Удалить кэш и временные файлы
 	find . -type d -name __pycache__ -exec rm -rf {} +

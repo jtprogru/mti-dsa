@@ -7,7 +7,11 @@ requires-python = ">=3.14"
 dependencies = []
 
 [dependency-groups]
-dev = ["pytest>=9.0.3", "pytest-cov>=7.1.0"]
+dev = [
+    "pytest>=9.0.3",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.15.18",
+]
 docs = [
     "mkdocs>=1.6",
     "mkdocs-material>=9.5",
@@ -15,9 +19,23 @@ docs = [
     "mkdocs-git-revision-date-localized-plugin>=1.2",
 ]
 
+[tool.ruff]
+line-length = 120
+target-version = "py314"
+src = ["src/python", "tests", "scripts"]
+
+[tool.ruff.lint]
+# E/W — pycodestyle, F — pyflakes (неиспользуемые импорты/имена), I — сортировка импортов.
+# Аналог black + isort + flake8 из соседнего проекта, но одним инструментом.
+select = ["E", "F", "I", "W"]
+# E501 (длина строки) выключена намеренно: ширину кода держит `ruff format`,
+# а длинные строки — это прозаические описания заданий в docstring'ах.
+ignore = ["E501"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src/python"]
+addopts = "--strict-markers --strict-config --tb=short"
 
 [tool.coverage.run]
 source = ["labs"]
