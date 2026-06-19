@@ -14,7 +14,7 @@ define go_foreach
 @for m in $(GO_MODULES); do echo "==> $$m"; (cd $$m && $(1)) || exit 1; done
 endef
 
-.PHONY: help sync test cov run clean docs docs-build \
+.PHONY: help sync test py-test cov run clean docs docs-build \
         go go-build go-vet go-test go-fmt check
 
 help: ## Показать список команд
@@ -24,7 +24,9 @@ help: ## Показать список команд
 sync: ## Установить зависимости
 	$(UV) sync
 
-test: ## Запустить тесты (pytest)
+test: py-test go-test ## Прогнать все тесты (Python + Go)
+
+py-test: ## Прогнать Python-тесты (pytest)
 	$(UV) run pytest -v
 
 cov: ## Тесты с отчётом покрытия (как в CI)
