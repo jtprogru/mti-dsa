@@ -87,10 +87,10 @@ class TestCustomRange:
             (1, 10, 2),
             (10, 0, -1),
             (10, 0, -3),
-            (5, 5),       # пустой: start == stop
-            (7, 3),       # пустой: start > stop при шаге +1
-            (0, 5, -1),   # пустой: шаг «не в ту сторону»
-            (-5, 5, 2),   # отрицательный старт
+            (5, 5),  # пустой: start == stop
+            (7, 3),  # пустой: start > stop при шаге +1
+            (0, 5, -1),  # пустой: шаг «не в ту сторону»
+            (-5, 5, 2),  # отрицательный старт
         ],
     )
     def test_matches_builtin_range(self, args):
@@ -145,7 +145,7 @@ class TestCustomRange:
 
     def test_contains_non_int_falls_back(self):
         r = custom_range(0, 5)
-        assert (2.0 in r) is True       # медленный путь, но True
+        assert (2.0 in r) is True  # медленный путь, но True
         assert (2.5 in r) is False
         assert ("x" in r) is False
 
@@ -153,10 +153,10 @@ class TestCustomRange:
         assert (0 in custom_range(5, 5)) is False
 
     def test_contains_negative_step(self):
-        r = custom_range(10, 0, -2)     # [10, 8, 6, 4, 2]
+        r = custom_range(10, 0, -2)  # [10, 8, 6, 4, 2]
         assert (6 in r) is True
-        assert (5 in r) is False        # вне шага
-        assert (0 in r) is False        # за границей
+        assert (5 in r) is False  # вне шага
+        assert (0 in r) is False  # за границей
 
     def test_index(self):
         r = custom_range(0, 100, 5)
@@ -180,7 +180,7 @@ class TestCustomRange:
     # --- равенство и хеш по порождаемой последовательности ---
 
     def test_eq_by_sequence(self):
-        assert custom_range(0, 3, 2) == custom_range(0, 4, 2)   # оба дают [0, 2]
+        assert custom_range(0, 3, 2) == custom_range(0, 4, 2)  # оба дают [0, 2]
         assert custom_range(5) == custom_range(0, 5)
 
     def test_eq_different(self):
@@ -188,13 +188,13 @@ class TestCustomRange:
         assert custom_range(0, 5) != custom_range(0, 5, 2)
 
     def test_eq_same_length_different_start(self):
-        assert custom_range(0, 5) != custom_range(1, 6)   # длина 5, старт 0 ≠ 1
+        assert custom_range(0, 5) != custom_range(1, 6)  # длина 5, старт 0 ≠ 1
 
     def test_eq_empty_ranges(self):
-        assert custom_range(5, 5) == custom_range(3, 3)   # обе пусты → равны
+        assert custom_range(5, 5) == custom_range(3, 3)  # обе пусты → равны
 
     def test_eq_single_element_ignores_step(self):
-        assert custom_range(0, 1) == custom_range(0, 1, 5)   # обе дают [0]
+        assert custom_range(0, 1) == custom_range(0, 1, 5)  # обе дают [0]
 
     def test_eq_other_type(self):
         assert custom_range(5) != [0, 1, 2, 3, 4]

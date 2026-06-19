@@ -5,8 +5,8 @@ import pytest
 
 from labs.lab02_random import BinaryTree, LinkedList, Queue, main
 
-
 # ─── helpers ─────────────────────────────────────────────────────────────────
+
 
 def list_values(ll: LinkedList) -> list[int]:
     values = []
@@ -49,6 +49,7 @@ def shape(node):
 
 
 # ─── LinkedList ──────────────────────────────────────────────────────────────
+
 
 class TestLinkedList:
     def test_empty_list_has_no_head(self):
@@ -103,6 +104,7 @@ class TestLinkedList:
 
 # ─── Queue ───────────────────────────────────────────────────────────────────
 
+
 class TestQueue:
     def test_new_queue_is_empty(self):
         assert Queue().is_empty()
@@ -149,6 +151,7 @@ class TestQueue:
 
 # ─── BinaryTree (вставка по порядку) ──────────────────────────────────────────
 
+
 class TestBinaryTreeAdd:
     def test_bst_property_inorder_sorted(self):
         bt = BinaryTree()
@@ -170,6 +173,7 @@ class TestBinaryTreeAdd:
 
 
 # ─── BinaryTree.build_balanced ────────────────────────────────────────────────
+
 
 class TestBuildBalanced:
     def test_inorder_still_sorted(self):

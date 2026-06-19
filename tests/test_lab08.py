@@ -130,10 +130,10 @@ class TestEvictionOrder:
         cache = LRUCache(2)
         cache.put(1, 1)
         cache.put(2, 2)
-        assert cache.get(1) == 1   # порядок [1, 2]
-        cache.put(3, 3)            # вытесняет 2
+        assert cache.get(1) == 1  # порядок [1, 2]
+        cache.put(3, 3)  # вытесняет 2
         assert cache.get(2) is None
-        cache.put(4, 4)            # вытесняет 1
+        cache.put(4, 4)  # вытесняет 1
         assert cache.get(1) is None
         assert cache.get(3) == 3
         assert cache.get(4) == 4
@@ -236,14 +236,19 @@ class TestMenu:
         feed_input(
             monkeypatch,
             [
-                "1", "a", "1",   # put a=1
-                "2", "a",         # get a
-                "3", "a",         # peek a
-                "4",              # печать
-                "5",              # демонстрация вытеснения
-                "6", "2",         # пересоздать кэш ёмкости 2
-                "x",              # неизвестный пункт
-                "0",              # выход
+                "1",
+                "a",
+                "1",  # put a=1
+                "2",
+                "a",  # get a
+                "3",
+                "a",  # peek a
+                "4",  # печать
+                "5",  # демонстрация вытеснения
+                "6",
+                "2",  # пересоздать кэш ёмкости 2
+                "x",  # неизвестный пункт
+                "0",  # выход
             ],
         )
         menu()

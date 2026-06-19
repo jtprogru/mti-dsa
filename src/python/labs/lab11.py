@@ -280,7 +280,7 @@ class BloomFilter:
         """Поставить бит pos в битовом массиве."""
         word = pos // self._WORD_BITS
         offset = pos % self._WORD_BITS
-        self._bits[word] |= (1 << offset)
+        self._bits[word] |= 1 << offset
 
     def _get_bit(self, pos: int) -> bool:
         """Стоит ли бит pos."""

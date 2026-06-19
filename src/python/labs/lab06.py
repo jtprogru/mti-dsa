@@ -271,10 +271,7 @@ def topological_sort(graph: DirectedGraph) -> list:
 
     if array_length(order) != array_length(graph.vertices()):
         # не все вершины «развязались» — значит, есть цикл
-        raise CycleError(
-            "Топологическая сортировка невозможна: в графе есть цикл "
-            "(циклическая зависимость)."
-        )
+        raise CycleError("Топологическая сортировка невозможна: в графе есть цикл (циклическая зависимость).")
     return order
 
 

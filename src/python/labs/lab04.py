@@ -20,7 +20,6 @@
 from labs.common import array_length, generate_array, print_array, read_int
 from labs.lab03 import insertion_sort
 
-
 # --- Задание 2: поиск простым перебором ------------------------------------
 
 

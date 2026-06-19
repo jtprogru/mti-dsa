@@ -22,7 +22,7 @@ class CustomRange(Sequence):
     """
 
     def __init__(self, start: int, stop: int | None = None, step: int = 1) -> None:
-        if stop is None:                      # форма CustomRange(stop)
+        if stop is None:  # форма CustomRange(stop)
             start, stop = 0, start
         if step == 0:
             raise ValueError("CustomRange() arg 3 must not be zero")
@@ -36,7 +36,7 @@ class CustomRange(Sequence):
             raw = (stop - start + step - 1) // step
         else:
             raw = (start - stop - step - 1) // (-step)
-        self._length = raw if raw > 0 else 0   # без встроенного max
+        self._length = raw if raw > 0 else 0  # без встроенного max
 
     def __len__(self) -> int:
         return self._length
@@ -50,7 +50,7 @@ class CustomRange(Sequence):
                 self.start + stop * self.step,
                 self.step * step,
             )
-        if index < 0:                          # нормализация отрицательного индекса
+        if index < 0:  # нормализация отрицательного индекса
             index += self._length
         if not 0 <= index < self._length:
             raise IndexError("CustomRange object index out of range")

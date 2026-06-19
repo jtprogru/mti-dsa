@@ -22,6 +22,7 @@ def feed_input(monkeypatch, values):
     inputs = iter(values)
     monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
 
+
 SORTERS = [
     selection_sort,
     selection_sort_with_min,

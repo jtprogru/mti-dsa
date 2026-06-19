@@ -293,15 +293,19 @@ class TestMenu:
         feed_input(
             monkeypatch,
             [
-                "1", "5", "1", "5", "10",  # задать параметры
-                "2",                        # token bucket
-                "3",                        # leaky bucket
-                "4",                        # sliding window log
-                "5",                        # sliding window counter
-                "6",                        # burst
-                "7",                        # steady
-                "z",                        # неизвестный пункт
-                "0",                        # выход
+                "1",
+                "5",
+                "1",
+                "5",
+                "10",  # задать параметры
+                "2",  # token bucket
+                "3",  # leaky bucket
+                "4",  # sliding window log
+                "5",  # sliding window counter
+                "6",  # burst
+                "7",  # steady
+                "z",  # неизвестный пункт
+                "0",  # выход
             ],
         )
         menu()

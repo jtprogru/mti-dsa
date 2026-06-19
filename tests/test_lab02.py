@@ -16,6 +16,7 @@ class TestMain:
 
 # ─── helpers ─────────────────────────────────────────────────────────────────
 
+
 def list_values(ll: LinkedList) -> list[int]:
     values = []
     current = ll.head
@@ -41,6 +42,7 @@ def inorder(node) -> list[int]:
 
 
 # ─── LinkedList ──────────────────────────────────────────────────────────────
+
 
 class TestLinkedList:
     def test_empty_list_has_no_head(self):
@@ -118,6 +120,7 @@ class TestLinkedList:
 
 # ─── Queue ───────────────────────────────────────────────────────────────────
 
+
 class TestQueue:
     def test_new_queue_is_empty(self):
         assert Queue().is_empty()
@@ -186,6 +189,7 @@ class TestQueue:
 
 
 # ─── BinaryTree ──────────────────────────────────────────────────────────────
+
 
 class TestBinaryTree:
     def test_new_tree_has_no_root(self):

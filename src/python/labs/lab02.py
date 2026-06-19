@@ -16,7 +16,6 @@
 7. Реализовать метод распечатки дерева.
 """
 
-
 from labs.common import custom_range
 
 

@@ -288,12 +288,18 @@ class TestMenu:
         feed_input(
             monkeypatch,
             [
-                "4", "10", "2", "100",     # своё кольцо: replicas, nodes, keys
-                "5", "1024", "3",          # свой bloom: size, k
-                "apple", "",               # добавляем элемент и завершаем ввод
-                "apple",                   # contains(apple)
-                "z",                       # неизвестный пункт
-                "0",                       # выход
+                "4",
+                "10",
+                "2",
+                "100",  # своё кольцо: replicas, nodes, keys
+                "5",
+                "1024",
+                "3",  # свой bloom: size, k
+                "apple",
+                "",  # добавляем элемент и завершаем ввод
+                "apple",  # contains(apple)
+                "z",  # неизвестный пункт
+                "0",  # выход
             ],
         )
         menu()

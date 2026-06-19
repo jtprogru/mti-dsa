@@ -51,9 +51,7 @@ def hash_key(key) -> int:
         return hash_int(key)
     if isinstance(key, str):
         return hash_str(key)
-    raise TypeError(
-        f"Неподдерживаемый тип ключа: {type(key).__name__}. Ожидается int или str."
-    )
+    raise TypeError(f"Неподдерживаемый тип ключа: {type(key).__name__}. Ожидается int или str.")
 
 
 # --- Задание 2: хеш-таблица методом цепочек ---------------------------------
