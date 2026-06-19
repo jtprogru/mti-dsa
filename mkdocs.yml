@@ -143,6 +143,7 @@ nav:
       - practice/index.md
       - Материалы:
           - "Распределённая система оплаты": practice/practice.md
+          - "Задачи с собеседований": practice/interview.md
           - "Шпаргалка": practice/cheatsheet.md
           - "Системы контроля версий и Git": practice/version-control.md
           - "Курсовые лабораторные": labs/index.md

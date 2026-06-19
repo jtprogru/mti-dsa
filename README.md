@@ -87,6 +87,7 @@ src/python/
     lab00.py          # Python для эксплуатации (файлы, argparse, исключения, генераторы)
     lab06.py … lab11.py # прикладные: графы, куча, LRU, rate limiting, разбор логов, consistent hashing
   tasks/loops/        # разминочные упражнения на циклы
+  tasks/interview/    # задачи с собеседований, сгруппированы по структурам из лаб
 src/golang/
   basics/             # Go — основы (тема 13)
   advanced/           # Go — продвинутый трек (тема 14)
