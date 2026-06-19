@@ -17,7 +17,7 @@
 5. Реализовать алгоритм бинарного поиска в полученном отсортированном массиве.
 """
 
-from labs.common import array_length, generate_array, print_array
+from labs.common import array_length, generate_array, print_array, read_int
 from labs.lab03 import insertion_sort
 
 
@@ -176,14 +176,14 @@ def menu() -> None:
             print("Выход.")
             return
         if choice == "1":
-            target = _read_int("Какое число ищем? ")
+            target = read_int("Какое число ищем? ")
             print(f"\nМассив: {arr}")
             print(f"Содержится:           {linear_contains(arr, target)}")
             print(f"Первое вхождение:     {linear_first_index(arr, target)}")
             print(f"Все вхождения:        {linear_all_indices(arr, target)}")
             print(f"Количество вхождений: {linear_count(arr, target)}")
         elif choice == "2":
-            target = _read_int("Какое число ищем? ")
+            target = read_int("Какое число ищем? ")
             idx, sorted_arr = binary_search_sorted(arr, target)
             print(f"\nОтсортированный массив: {sorted_arr}")
             if idx == -1:
@@ -197,7 +197,7 @@ def menu() -> None:
             arr = sequence
             print("Эта последовательность стала текущим массивом.")
         elif choice == "4":
-            target = _read_int("Какое число ищем? ")
+            target = read_int("Какое число ищем? ")
             idx = binary_search(arr, target)
             if idx == -1:
                 print("Элемент не найден. (Для пункта 4 массив должен быть отсортирован — см. пункт 3.)")
@@ -209,15 +209,6 @@ def menu() -> None:
             print_array(arr)
         else:
             print("Неизвестный пункт меню, попробуйте снова.")
-
-
-def _read_int(prompt: str) -> int:
-    while True:
-        raw = input(prompt).strip()
-        try:
-            return int(raw)
-        except ValueError:
-            print("Это не целое число, попробуйте снова.")
 
 
 def main() -> None:

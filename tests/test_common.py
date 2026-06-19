@@ -9,7 +9,15 @@ from labs.common import (
     custom_range,
     generate_array,
     print_array,
+    read_float,
+    read_int,
 )
+
+
+def feed_input(monkeypatch, values):
+    """Подменяет input() последовательностью значений."""
+    inputs = iter(values)
+    monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
 
 
 class TestArrayLength:
@@ -223,3 +231,65 @@ class TestCustomRange:
         r = custom_range(10**18)
         assert len(r) == 10**18
         assert r[10**17] == 10**17
+
+
+class TestReadInt:
+    def test_valid(self, monkeypatch):
+        feed_input(monkeypatch, ["7"])
+        assert read_int("p: ") == 7
+
+    def test_negative(self, monkeypatch):
+        feed_input(monkeypatch, ["-5"])
+        assert read_int("p: ") == -5
+
+    def test_retries_until_valid(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["abc", "9"])
+        assert read_int("p: ") == 9
+        assert "Это не целое число" in capsys.readouterr().out
+
+    def test_empty_without_default_retries(self, monkeypatch, capsys):
+        # default не задан -> пустой ввод считается неверным и запрос повторяется
+        feed_input(monkeypatch, ["", "4"])
+        assert read_int("p: ") == 4
+        assert "Это не целое число" in capsys.readouterr().out
+
+    def test_empty_returns_default(self, monkeypatch):
+        feed_input(monkeypatch, [""])
+        assert read_int("p: ", default=42) == 42
+
+    def test_value_overrides_default(self, monkeypatch):
+        feed_input(monkeypatch, ["8"])
+        assert read_int("p: ", default=42) == 8
+
+    def test_retries_then_default_on_empty(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["xx", ""])
+        assert read_int("p: ", default=3) == 3
+        assert "Это не целое число" in capsys.readouterr().out
+
+
+class TestReadFloat:
+    def test_valid(self, monkeypatch):
+        feed_input(monkeypatch, ["3.14"])
+        assert read_float("p: ") == 3.14
+
+    def test_accepts_int_text(self, monkeypatch):
+        feed_input(monkeypatch, ["5"])
+        assert read_float("p: ") == 5.0
+
+    def test_retries_until_valid(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["nan?", "2.5"])
+        assert read_float("p: ") == 2.5
+        assert "Это не число" in capsys.readouterr().out
+
+    def test_empty_without_default_retries(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["", "1.5"])
+        assert read_float("p: ") == 1.5
+        assert "Это не число" in capsys.readouterr().out
+
+    def test_empty_returns_default(self, monkeypatch):
+        feed_input(monkeypatch, [""])
+        assert read_float("p: ", default=2.71) == 2.71
+
+    def test_value_overrides_default(self, monkeypatch):
+        feed_input(monkeypatch, ["9.0"])
+        assert read_float("p: ", default=2.71) == 9.0

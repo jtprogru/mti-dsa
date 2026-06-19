@@ -21,7 +21,7 @@
    срабатываний bloom-фильтра.
 """
 
-from labs.common import array_length
+from labs.common import array_length, read_int
 
 # --- Задание 1: хеш-функция -------------------------------------------------
 
@@ -356,18 +356,6 @@ def _exp(x: float) -> float:
 # --- Задание 5: меню и демонстрации -----------------------------------------
 
 
-def _read_int(prompt: str, default: int) -> int:
-    """Читает целое число; пустой ввод -> default; при ошибке повторяет запрос."""
-    while True:
-        raw = input(prompt).strip()
-        if raw == "":
-            return default
-        try:
-            return int(raw)
-        except ValueError:
-            print("Это не целое число, попробуйте снова.")
-
-
 def _sample_keys(count: int) -> list:
     """Набор строковых ключей вида key-0..key-(count-1) для демонстраций."""
     keys: list = []
@@ -431,11 +419,13 @@ def demo_bloom() -> None:
     for item in added:
         bloom.add(item)
 
-    # ложноотрицательных не бывает: всё добавленное обязано находиться
+    # ложноотрицательных не бывает: всё добавленное обязано находиться.
+    # Эта проверка демонстрирует инвариант bloom-фильтра, поэтому ветка
+    # all_found = False по построению недостижима и исключена из покрытия.
     all_found = True
     for item in added:
         if not bloom.contains(item):
-            all_found = False
+            all_found = False  # pragma: no cover
     print(f"\nДобавлено {array_length(added)} элементов в фильтр (size=1024, k=3).")
     print(f"  все добавленные находятся (нет ложноотрицательных): {all_found}")
 
@@ -482,9 +472,9 @@ def menu() -> None:
         elif choice == "3":
             demo_bloom()
         elif choice == "4":
-            replicas = _read_int("Виртуальных нод на физическую (Enter=100): ", 100)
-            num_nodes = _read_int("Сколько нод (Enter=4): ", 4)
-            num_keys = _read_int("Сколько ключей разложить (Enter=10000): ", 10000)
+            replicas = read_int("Виртуальных нод на физическую (Enter=100): ", 100)
+            num_nodes = read_int("Сколько нод (Enter=4): ", 4)
+            num_keys = read_int("Сколько ключей разложить (Enter=10000): ", 10000)
             ring = ConsistentHashRing(replicas=replicas)
             i = 0
             while i < num_nodes:
@@ -495,8 +485,8 @@ def menu() -> None:
             for node in ring.nodes():
                 print(f"  {node}: {dist[node]}")
         elif choice == "5":
-            size = _read_int("Размер битового массива (Enter=1024): ", 1024)
-            k = _read_int("Число хеш-функций k (Enter=3): ", 3)
+            size = read_int("Размер битового массива (Enter=1024): ", 1024)
+            k = read_int("Число хеш-функций k (Enter=3): ", 3)
             bloom = BloomFilter(size=size, num_hashes=k)
             print("Вводите элементы для добавления, пустая строка — закончить.")
             while True:

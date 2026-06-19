@@ -6,11 +6,21 @@ from labs.lab06 import (
     bfs,
     build_cyclic_graph,
     build_services_graph,
+    demo_cycle,
+    demo_services,
     dfs,
     has_cycle,
+    main,
+    menu,
     startup_order,
     topological_sort,
 )
+
+
+def feed_input(monkeypatch, values):
+    """Подменяет input() последовательностью значений."""
+    inputs = iter(values)
+    monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
 
 
 # ─── helpers ─────────────────────────────────────────────────────────────────
@@ -157,6 +167,14 @@ class TestDFS:
         graph = make_graph([(1, 2), (2, 3), (3, 1)])
         assert dfs(graph, 1) == [1, 2, 3]
 
+    def test_vertex_pushed_twice_is_visited_once(self):
+        # Ромб: вершину 3 в стек кладут оба родителя (1 и 2) до её посещения.
+        # Когда дубликат всплывает из стека повторно, DFS должен его пропустить.
+        graph = make_graph([(1, 2), (1, 3), (2, 3)])
+        order = dfs(graph, 1)
+        assert order == [1, 2, 3]
+        assert len(order) == len(set(order))
+
     def test_missing_start_raises(self):
         with pytest.raises(KeyError):
             dfs(make_graph(KNOWN_EDGES), 99)
@@ -267,3 +285,75 @@ class TestStartupOrder:
     def test_cycle_raises(self):
         with pytest.raises(CycleError):
             startup_order(build_cyclic_graph())
+
+
+class TestDemos:
+    def test_demo_services(self, capsys):
+        demo_services()
+        out = capsys.readouterr().out
+        assert "BFS от 'web'" in out
+        assert "Топологический порядок" in out
+
+    def test_demo_cycle(self, capsys):
+        demo_cycle()
+        out = capsys.readouterr().out
+        assert "Есть цикл? да" in out
+        assert "topological_sort ->" in out
+
+
+class TestMenu:
+    def test_all_options_then_exit(self, monkeypatch, capsys):
+        feed_input(
+            monkeypatch,
+            [
+                "1",                  # показать граф
+                "2", "newnode",       # добавить вершину
+                "3", "newnode", "db",  # добавить ребро
+                "4", "web",           # BFS от существующей
+                "4", "missing",       # BFS от несуществующей
+                "5", "web",           # DFS от существующей
+                "5", "missing",       # DFS от несуществующей
+                "6",                  # проверить на цикл
+                "7",                  # топосортировка
+                "8",                  # порядок запуска
+                "9",                  # демо сервисов
+                "10",                 # демо цикла
+                "z",                  # неизвестный пункт
+                "0",                  # выход
+            ],
+        )
+        menu()
+        out = capsys.readouterr().out
+        assert "Добавлена вершина: newnode" in out
+        assert "Добавлено ребро: newnode -> db" in out
+        assert "Вершины 'missing' нет в графе." in out
+        assert "Неизвестный пункт меню" in out
+        assert "Выход." in out
+
+    def test_cycle_then_topo_and_startup_report_error(self, monkeypatch, capsys):
+        # Через меню замыкаем цикл (cyc1 -> cyc2 -> cyc1), затем просим
+        # топосортировку (7) и порядок запуска (8): оба ловят CycleError.
+        feed_input(
+            monkeypatch,
+            [
+                "3", "cyc1", "cyc2",  # ребро cyc1 -> cyc2
+                "3", "cyc2", "cyc1",  # ребро cyc2 -> cyc1 (замыкаем цикл)
+                "7",                  # топосортировка -> CycleError
+                "8",                  # порядок запуска -> CycleError
+                "0",                  # выход
+            ],
+        )
+        menu()
+        out = capsys.readouterr().out
+        assert out.count("цикл") >= 2  # сообщение об ошибке напечатано в пунктах 7 и 8
+        assert "Выход." in out
+
+    def test_exit_immediately(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        menu()
+        assert "Выход." in capsys.readouterr().out
+
+    def test_main_delegates_to_menu(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        main()
+        assert "Выход." in capsys.readouterr().out

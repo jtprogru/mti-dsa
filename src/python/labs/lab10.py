@@ -224,9 +224,12 @@ def percentile(values: list[float], p: float) -> float:
     scaled = p * n  # = (p/100 * n) * 100, делим на 100 ниже
     rank = (scaled + 99) // 100  # ceil(scaled/100)
     rank = int(rank)
-    if rank < 1:
+    # Защита границ: при 0 < p < 100 ранг и так лежит в [1, n] (см. выше), поэтому
+    # эти клампы недостижимы и исключены из покрытия. Оставлены намеренно — они
+    # фиксируют инвариант индекса на случай изменения guard'ов p<=0 / p>=100.
+    if rank < 1:  # pragma: no cover
         rank = 1
-    if rank > n:
+    if rank > n:  # pragma: no cover
         rank = n
     return ordered[rank - 1]
 

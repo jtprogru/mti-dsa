@@ -5,12 +5,24 @@ import pytest
 from labs.lab11 import (
     BloomFilter,
     ConsistentHashRing,
+    _sample_keys,
+    demo_bloom,
+    demo_naive_vs_ring,
+    demo_virtual_nodes,
     hash_key,
     hash_str,
+    main,
+    menu,
     naive_node,
     naive_rebalanced_fraction,
     ring_rebalanced_fraction,
 )
+
+
+def feed_input(monkeypatch, values):
+    """Подменяет input() последовательностью значений."""
+    inputs = iter(values)
+    monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
 
 
 def _make_keys(count: int) -> list:
@@ -235,3 +247,75 @@ class TestBloomFilter:
             bloom.add(item)
         high = bloom.estimated_false_positive_rate()
         assert 0.0 < low < high < 1.0
+
+
+class TestRingRebalancedFractionEmpty:
+    def test_no_keys_returns_zero(self):
+        nodes = ["node-A", "node-B"]
+        assert ring_rebalanced_fraction([], nodes, "node-C", replicas=10) == 0.0
+
+
+class TestSampleKeys:
+    def test_generates_sequential_keys(self):
+        assert _sample_keys(3) == ["key-0", "key-1", "key-2"]
+
+    def test_empty(self):
+        assert _sample_keys(0) == []
+
+
+class TestDemos:
+    def test_demo_naive_vs_ring(self, capsys):
+        demo_naive_vs_ring()
+        out = capsys.readouterr().out
+        assert "hash % N" in out
+        assert "consistent ring" in out
+
+    def test_demo_virtual_nodes(self, capsys):
+        demo_virtual_nodes()
+        out = capsys.readouterr().out
+        assert "replicas=" in out
+        assert "перекос" in out
+
+    def test_demo_bloom(self, capsys):
+        demo_bloom()
+        out = capsys.readouterr().out
+        assert "ложноотрицательных" in out
+        assert "ложноположительных" in out
+
+
+class TestMenu:
+    def test_custom_ring_and_bloom_then_exit(self, monkeypatch, capsys):
+        feed_input(
+            monkeypatch,
+            [
+                "4", "10", "2", "100",     # своё кольцо: replicas, nodes, keys
+                "5", "1024", "3",          # свой bloom: size, k
+                "apple", "",               # добавляем элемент и завершаем ввод
+                "apple",                   # contains(apple)
+                "z",                       # неизвестный пункт
+                "0",                       # выход
+            ],
+        )
+        menu()
+        out = capsys.readouterr().out
+        assert "Раскладка ключей по нодам" in out
+        assert "contains('apple')" in out
+        assert "Неизвестный пункт меню" in out
+        assert "Выход." in out
+
+    def test_demo_options_then_exit(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["1", "2", "3", "0"])
+        menu()
+        out = capsys.readouterr().out
+        assert "consistent ring" in out
+        assert "Выход." in out
+
+    def test_exit_immediately(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        menu()
+        assert "Выход." in capsys.readouterr().out
+
+    def test_main_delegates_to_menu(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        main()
+        assert "Выход." in capsys.readouterr().out

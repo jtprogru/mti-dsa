@@ -24,4 +24,7 @@ source = ["labs"]
 
 [tool.coverage.report]
 show_missing = true
-exclude_lines = ["if __name__ == .__main__.:"]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+]

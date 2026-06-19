@@ -4,7 +4,6 @@ from labs.lab08 import (
     LRUCache,
     Node,
     _parse_key,
-    _read_int,
     demo_eviction,
     main,
     menu,
@@ -223,17 +222,6 @@ class TestParseKey:
         assert _parse_key(raw) == expected
 
 
-class TestReadInt:
-    def test_valid(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "7")
-        assert _read_int("p") == 7
-
-    def test_retries_until_valid(self, monkeypatch, capsys):
-        feed_input(monkeypatch, ["abc", "9"])
-        assert _read_int("p") == 9
-        assert "Это не целое число" in capsys.readouterr().out
-
-
 class TestDemo:
     def test_demo_eviction(self, capsys):
         demo_eviction()
@@ -264,6 +252,14 @@ class TestMenu:
         assert "Создан новый пустой кэш" in out
         assert "Неизвестный пункт" in out
         assert "Выход" in out
+
+    def test_invalid_capacity_keeps_cache(self, monkeypatch, capsys):
+        # Пункт 6 с ёмкостью < 1: кэш не пересоздаётся, печатается предупреждение.
+        feed_input(monkeypatch, ["6", "0", "0"])
+        menu()
+        out = capsys.readouterr().out
+        assert "Ёмкость должна быть >= 1" in out
+        assert "Создан новый пустой кэш" not in out
 
     def test_exit_immediately(self, monkeypatch, capsys):
         feed_input(monkeypatch, ["0"])

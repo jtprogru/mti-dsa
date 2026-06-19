@@ -21,6 +21,8 @@
 узла, список — O(1) изменение порядка и вытеснение.
 """
 
+from labs.common import read_int
+
 # --- Задание 1: узел двусвязного списка -------------------------------------
 
 
@@ -188,16 +190,6 @@ def _read_key(prompt: str):
     return _parse_key(input(prompt).strip())
 
 
-def _read_int(prompt: str) -> int:
-    """Читает целое число, повторяя запрос при неверном вводе."""
-    while True:
-        raw = input(prompt).strip()
-        try:
-            return int(raw)
-        except ValueError:
-            print("Это не целое число, попробуйте снова.")
-
-
 def demo_eviction() -> None:
     """Наглядно показывает, как LRU-кэш меняет порядок и кого вытесняет.
 
@@ -274,7 +266,7 @@ def menu() -> None:
         elif choice == "5":
             demo_eviction()
         elif choice == "6":
-            capacity = _read_int("Новая ёмкость (>= 1): ")
+            capacity = read_int("Новая ёмкость (>= 1): ")
             if capacity < 1:
                 print("Ёмкость должна быть >= 1, оставляю прежний кэш.")
                 capacity = len(cache._store) or 1

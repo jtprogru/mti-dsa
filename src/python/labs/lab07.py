@@ -15,7 +15,7 @@
    приоритетная очередь, top-K.
 """
 
-from labs.common import array_length, generate_array
+from labs.common import array_length, generate_array, read_int
 
 # --- Задание 1-2: бинарная куча на массиве ----------------------------------
 
@@ -286,16 +286,6 @@ def top_k_smallest(arr: list, k: int) -> list:
 # --- Задание 5: меню и демонстрация -----------------------------------------
 
 
-def _read_int(prompt: str) -> int:
-    """Читает целое число, повторяя запрос при неверном вводе."""
-    while True:
-        raw = input(prompt).strip()
-        try:
-            return int(raw)
-        except ValueError:
-            print("Это не целое число, попробуйте снова.")
-
-
 def demo_heap(arr: list) -> None:
     """Строит min- и max-кучу из массива, показывает вершины и heapsort."""
     print("Исходный массив:", arr)
@@ -358,11 +348,11 @@ def menu() -> None:
             print()
             demo_priority_queue()
         elif choice == "3":
-            k = _read_int("Сколько элементов в top-K: ")
+            k = read_int("Сколько элементов в top-K: ")
             print()
             demo_top_k(arr, k)
         elif choice == "4":
-            value = _read_int("Значение для вставки: ")
+            value = read_int("Значение для вставки: ")
             heap = BinaryHeap(kind="min", data=arr)
             heap.push(value)
             print("Куча после push:", heap.as_list(), "-> вершина:", heap.peek())

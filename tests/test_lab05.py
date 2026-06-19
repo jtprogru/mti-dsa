@@ -4,7 +4,6 @@ from labs.lab05 import (
     HashMapChaining,
     HashMapOpenAddr,
     _parse_key,
-    _read_int,
     demo_collisions,
     demo_resize,
     hash_int,
@@ -265,17 +264,6 @@ class TestParseKey:
 
     def test_string(self):
         assert _parse_key("hello") == "hello"
-
-
-class TestReadInt:
-    def test_valid(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "7")
-        assert _read_int("p") == 7
-
-    def test_retries_until_valid(self, monkeypatch, capsys):
-        feed_input(monkeypatch, ["abc", "9"])
-        assert _read_int("p") == 9
-        assert "Это не целое число" in capsys.readouterr().out
 
 
 class TestDemos:

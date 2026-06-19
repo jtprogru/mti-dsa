@@ -1,7 +1,6 @@
 import pytest
 
 from labs.lab04 import (
-    _read_int,
     array_length,
     binary_search,
     binary_search_sorted,
@@ -210,27 +209,6 @@ class TestArrayLength:
 
     def test_single(self):
         assert array_length([42]) == 1
-
-
-class TestReadInt:
-    def test_reads_valid_int(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "42")
-        assert _read_int("prompt") == 42
-
-    def test_strips_whitespace(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "  7  ")
-        assert _read_int("prompt") == 7
-
-    def test_negative_int(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "-5")
-        assert _read_int("prompt") == -5
-
-    def test_retries_until_valid(self, monkeypatch, capsys):
-        inputs = iter(["abc", "1.5", "9"])
-        monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
-        assert _read_int("prompt") == 9
-        # на каждый невалидный ввод печатается подсказка
-        assert capsys.readouterr().out.count("Это не целое число") == 2
 
 
 class TestReadSortedSequence:

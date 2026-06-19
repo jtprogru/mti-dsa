@@ -6,8 +6,6 @@ from labs.lab09 import (
     SlidingWindowCounter,
     SlidingWindowLog,
     TokenBucket,
-    _read_float,
-    _read_int,
     demo_burst,
     demo_steady,
     main,
@@ -165,6 +163,13 @@ class TestLeakyBucket:
         # после долгой паузы вода полностью вытекла (не уходит в минус)
         assert lb.water_level(1000.0) == 0.0
 
+    def test_time_going_backwards_is_ignored(self):
+        # Защита от рассинхрона часов: now < последнего времени слива -> утечки нет.
+        lb = LeakyBucket(capacity=3, rate=1, start=10.0)
+        lb.allow(10.0)  # налили 1, _last = 10.0
+        # «часы пошли назад» (now=5 < 10): вода не должна вытечь
+        assert lb.water_level(5.0) == 1.0
+
     @pytest.mark.parametrize(
         "rate,wait,drained",
         [
@@ -265,29 +270,6 @@ class TestSlidingWindowCounter:
         e_early = sw.estimated_count(11.0)  # почти всё предыдущее окно ещё в счёт
         e_late = sw.estimated_count(19.0)  # почти выехали из предыдущего окна
         assert e_early > e_late
-
-
-class TestReadHelpers:
-    def test_read_int_default_on_empty(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "")
-        assert _read_int("p", 7) == 7
-
-    def test_read_int_valid(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "42")
-        assert _read_int("p", 7) == 42
-
-    def test_read_int_retries(self, monkeypatch, capsys):
-        feed_input(monkeypatch, ["x", "9"])
-        assert _read_int("p", 0) == 9
-        assert "Это не целое число" in capsys.readouterr().out
-
-    def test_read_float_default_on_empty(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "")
-        assert _read_float("p", 1.5) == 1.5
-
-    def test_read_float_valid(self, monkeypatch):
-        monkeypatch.setattr("builtins.input", lambda _="": "2.5")
-        assert _read_float("p", 1.0) == 2.5
 
 
 class TestDemos:

@@ -2,11 +2,17 @@ import pytest
 
 from labs.lab00 import (
     ConfigError,
+    _demo_cli,
+    _demo_config,
+    _demo_files,
+    _demo_generators,
     even_squares,
     filter_lines,
     iter_lines,
     load_config,
+    main,
     main_cli,
+    menu,
     parse_args,
     parse_config,
     parse_config_line,
@@ -14,6 +20,12 @@ from labs.lab00 import (
     run,
     write_lines,
 )
+
+
+def feed_input(monkeypatch, values):
+    """Подменяет input() последовательностью значений."""
+    inputs = iter(values)
+    monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
 
 
 # --- Задание 1: файлы через контекстные менеджеры ---------------------------
@@ -262,3 +274,56 @@ class TestMainCli:
         path = tmp_path / "data.txt"
         write_lines(path, ["x"])
         assert main_cli([str(path)]) == 2
+
+
+class TestRunOSError:
+    def test_directory_path_returns_one(self, tmp_path, capsys):
+        # Передаём директорию вместо файла -> IsADirectoryError (подкласс OSError).
+        assert run(parse_args([str(tmp_path), "--count"])) == 1
+        assert "Не удалось прочитать файл" in capsys.readouterr().out
+
+
+class TestDemos:
+    def test_demo_files(self, tmp_path, capsys):
+        _demo_files(tmp_path)
+        out = capsys.readouterr().out
+        assert "Записано строк" in out
+        assert "Ленивое потоковое чтение" in out
+
+    def test_demo_config(self, tmp_path, capsys):
+        _demo_config(tmp_path)
+        out = capsys.readouterr().out
+        assert "host -> localhost" in out
+        assert "поймали ошибку" in out
+
+    def test_demo_generators(self, capsys):
+        _demo_generators()
+        out = capsys.readouterr().out
+        assert "Квадраты чётных чисел" in out
+        assert "Случайный массив" in out
+
+    def test_demo_cli(self, tmp_path, capsys):
+        _demo_cli(tmp_path)
+        out = capsys.readouterr().out
+        assert "код возврата: 0" in out
+        assert "код возврата: 1" in out
+
+
+class TestMenu:
+    def test_all_options_then_exit(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["1", "2", "3", "4", "x", "0"])
+        menu()
+        out = capsys.readouterr().out
+        assert "Записано строк" in out
+        assert "Неизвестный пункт меню" in out
+        assert "Выход." in out
+
+    def test_exit_immediately(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        menu()
+        assert "Выход." in capsys.readouterr().out
+
+    def test_main_delegates_to_menu(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        main()
+        assert "Выход." in capsys.readouterr().out

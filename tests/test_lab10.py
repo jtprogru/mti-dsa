@@ -3,14 +3,26 @@ import pytest
 from labs.lab10 import (
     LogEntry,
     LogStats,
+    _print_counter,
     aggregate,
+    analyze_file,
+    demo_parse_one,
+    demo_sample,
     latency_percentiles,
+    main,
+    menu,
     parse_line,
     parse_log,
     percentile,
     read_lines,
     top_n,
 )
+
+
+def feed_input(monkeypatch, values):
+    """Подменяет input() последовательностью значений."""
+    inputs = iter(values)
+    monkeypatch.setattr("builtins.input", lambda _="": next(inputs))
 
 
 class TestParseLine:
@@ -244,3 +256,89 @@ class TestLatencyPercentiles:
 
     def test_empty_returns_zeros(self):
         assert latency_percentiles([]) == {"p50": 0.0, "p95": 0.0, "p99": 0.0}
+
+
+class TestLogEntryDunder:
+    def test_eq_with_other_type_is_false(self):
+        entry = LogEntry("10.0.0.1", "GET", "/", 200, 1.0)
+        # __eq__ возвращает NotImplemented -> Python трактует как неравенство
+        assert entry != "не LogEntry"
+        assert (entry == 123) is False
+
+    def test_repr_contains_fields(self):
+        entry = LogEntry("10.0.0.1", "GET", "/api", 200, 1.5)
+        text = repr(entry)
+        assert text.startswith("LogEntry(ip='10.0.0.1'")
+        assert "status=200" in text
+
+
+class TestPrintCounter:
+    def test_prints_top_keys(self, capsys):
+        _print_counter("Заголовок", {"a": 5, "b": 3, "c": 1}, limit=2)
+        out = capsys.readouterr().out
+        assert "Заголовок:" in out
+        assert "a: 5" in out
+        assert "b: 3" in out
+        assert "c: 1" not in out
+
+
+class TestDemos:
+    def test_demo_sample(self, capsys):
+        demo_sample()
+        out = capsys.readouterr().out
+        assert "Обработано валидных записей" in out
+        assert "Перцентили латентности" in out
+
+    def test_demo_parse_one(self, capsys):
+        demo_parse_one()
+        out = capsys.readouterr().out
+        assert "Валидная строка" in out
+        assert "Битая строка" in out
+
+
+class TestAnalyzeFile:
+    def test_reads_and_aggregates(self, tmp_path, monkeypatch, capsys):
+        path = tmp_path / "access.log"
+        path.write_text(
+            "10.0.0.1 GET /api 200 12.5\n10.0.0.2 POST /login 500 40.0\n",
+            encoding="utf-8",
+        )
+        feed_input(monkeypatch, [str(path)])
+        analyze_file()
+        out = capsys.readouterr().out
+        assert "Обработано валидных записей: 2" in out
+        assert "Перцентили латентности" in out
+
+    def test_no_valid_lines(self, tmp_path, monkeypatch, capsys):
+        path = tmp_path / "empty.log"
+        path.write_text("совсем не лог\n", encoding="utf-8")
+        feed_input(monkeypatch, [str(path)])
+        analyze_file()
+        assert "не нашлось ни одной валидной строки" in capsys.readouterr().out
+
+    def test_oserror_on_directory(self, tmp_path, monkeypatch, capsys):
+        feed_input(monkeypatch, [str(tmp_path)])
+        analyze_file()
+        assert "Не удалось прочитать файл" in capsys.readouterr().out
+
+
+class TestMenu:
+    def test_all_options_then_exit(self, tmp_path, monkeypatch, capsys):
+        path = tmp_path / "access.log"
+        path.write_text("10.0.0.1 GET /api 200 12.5\n", encoding="utf-8")
+        feed_input(monkeypatch, ["1", "2", "3", str(path), "x", "0"])
+        menu()
+        out = capsys.readouterr().out
+        assert "Обработано валидных записей" in out
+        assert "Неизвестный пункт меню" in out
+        assert "Выход." in out
+
+    def test_exit_immediately(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        menu()
+        assert "Выход." in capsys.readouterr().out
+
+    def test_main_delegates_to_menu(self, monkeypatch, capsys):
+        feed_input(monkeypatch, ["0"])
+        main()
+        assert "Выход." in capsys.readouterr().out

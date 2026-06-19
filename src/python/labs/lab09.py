@@ -26,7 +26,7 @@
 
 import time
 
-from labs.common import array_length
+from labs.common import array_length, read_float, read_int
 
 # --- Задание 1: кольцевой буфер (ring buffer) -------------------------------
 
@@ -301,7 +301,10 @@ class SlidingWindowCounter:
         """Взвешенная оценка числа запросов в скользящем окне к моменту now."""
         elapsed_in_current = now - self._current_window * self._window
         prev_weight = (self._window - elapsed_in_current) / self._window
-        if prev_weight < 0:
+        # После _roll(now) elapsed_in_current ∈ [0, window), поэтому prev_weight
+        # ∈ (0, 1] и кламп недостижим через публичный API (allow/estimated_count
+        # всегда вызывают _roll первым). Оставлен как защита инварианта.
+        if prev_weight < 0:  # pragma: no cover
             prev_weight = 0.0
         return self._prev_count * prev_weight + self._curr_count
 
@@ -320,30 +323,6 @@ class SlidingWindowCounter:
 
 
 # --- Задание 7: меню и демонстрация -----------------------------------------
-
-
-def _read_int(prompt: str, default: int) -> int:
-    """Читает целое число; пустой ввод => default; повтор при неверном вводе."""
-    while True:
-        raw = input(prompt).strip()
-        if raw == "":
-            return default
-        try:
-            return int(raw)
-        except ValueError:
-            print("Это не целое число, попробуйте снова.")
-
-
-def _read_float(prompt: str, default: float) -> float:
-    """Читает число с плавающей точкой; пустой ввод => default."""
-    while True:
-        raw = input(prompt).strip()
-        if raw == "":
-            return default
-        try:
-            return float(raw)
-        except ValueError:
-            print("Это не число, попробуйте снова.")
 
 
 def _build_limiters(capacity: float, rate: float, limit: int, window: float):
@@ -422,10 +401,10 @@ def menu() -> None:
             print("Выход.")
             return
         if choice == "1":
-            capacity = _read_float(f"capacity [{capacity}]: ", capacity)
-            rate = _read_float(f"rate в секунду [{rate}]: ", rate)
-            limit = _read_int(f"limit [{limit}]: ", limit)
-            window = _read_float(f"окно в секундах [{window}]: ", window)
+            capacity = read_float(f"capacity [{capacity}]: ", capacity)
+            rate = read_float(f"rate в секунду [{rate}]: ", rate)
+            limit = read_int(f"limit [{limit}]: ", limit)
+            window = read_float(f"окно в секундах [{window}]: ", window)
             print("Параметры обновлены.")
         elif choice in ("2", "3", "4", "5"):
             now = clock()

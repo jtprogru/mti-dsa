@@ -398,16 +398,6 @@ def _read_key(prompt: str):
     return _parse_key(input(prompt).strip())
 
 
-def _read_int(prompt: str) -> int:
-    """Читает целое число, повторяя запрос при неверном вводе."""
-    while True:
-        raw = input(prompt).strip()
-        try:
-            return int(raw)
-        except ValueError:
-            print("Это не целое число, попробуйте снова.")
-
-
 def demo_collisions() -> None:
     """Вставляет ключи, попадающие в один индекс, в три разные таблицы.
 
