@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -29,16 +30,25 @@ func fetch(ctx context.Context, client *http.Client, url string) (int, string, e
 	return resp.StatusCode, string(body), nil
 }
 
+// run выполняет запрос и печатает результат в out. Логику вынесли из main,
+// чтобы её можно было покрыть тестами (main остаётся тонкой обёрткой над сетью).
+func run(ctx context.Context, out io.Writer, client *http.Client, url string) error {
+	status, body, err := fetch(ctx, client, url)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintln(out, "статус:", status)
+	fmt.Fprintln(out, "тело:  ", body)
+	return nil
+}
+
 func main() {
 	client := &http.Client{Timeout: 5 * time.Second}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
 	defer cancel()
 
-	status, body, err := fetch(ctx, client, "http://localhost:8080/users/42")
-	if err != nil {
+	if err := run(ctx, os.Stdout, client, "http://localhost:8080/users/42"); err != nil {
 		log.Fatal(err)
 	}
-	fmt.Println("статус:", status)
-	fmt.Println("тело:  ", body)
 }

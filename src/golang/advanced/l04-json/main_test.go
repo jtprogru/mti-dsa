@@ -2,6 +2,8 @@ package main
 
 import (
 	"encoding/json"
+	"io"
+	"strings"
 	"testing"
 	"time"
 )
@@ -45,6 +47,23 @@ func TestUserRoundTrip(t *testing.T) {
 	}
 	if u.ID != 2 || u.Name != "Bob" || u.Email != "bob@example.com" {
 		t.Errorf("user = %+v", u)
+	}
+}
+
+func TestDemo(t *testing.T) {
+	var buf strings.Builder
+	raw := `{"id":2,"name":"Bob","email":"bob@example.com","join_date":"2026-01-01"}`
+	if err := demo(&buf, raw); err != nil {
+		t.Fatalf("demo вернул ошибку: %v", err)
+	}
+	out := buf.String()
+	if !strings.Contains(out, "Сериализованный JSON") || !strings.Contains(out, "Bob") {
+		t.Errorf("demo вывод = %q", out)
+	}
+
+	// Битый JSON пробрасывает ошибку разбора наружу.
+	if err := demo(io.Discard, `{не json`); err == nil {
+		t.Error("ожидали ошибку разбора битого JSON")
 	}
 }
 

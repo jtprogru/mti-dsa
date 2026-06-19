@@ -106,6 +106,9 @@ func TestGetMinElement(t *testing.T) {
 }
 
 func TestGetIndexMinElement(t *testing.T) {
+	if _, err := GetIndexMinElement([]int{}, 0); !errors.Is(err, ErrEmpty) {
+		t.Errorf("GetIndexMinElement([], 0) ожидали ErrEmpty, получили %v", err)
+	}
 	arr := []int{5, 3, 8, 1, 9}
 	tests := []struct {
 		start int

@@ -4,6 +4,9 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"os"
 	"time"
 )
 
@@ -33,7 +36,9 @@ type User struct {
 	Internal string `json:"-"`
 }
 
-func main() {
+// demo сериализует пример пользователя и разбирает raw обратно, печатая шаги в
+// out. Логику вынесли из main, чтобы покрыть тестами обе ветки разбора.
+func demo(out io.Writer, raw string) error {
 	u := User{
 		ID:       1,
 		Name:     "Alice",
@@ -41,14 +46,20 @@ func main() {
 		Internal: "секрет",
 	}
 	data, _ := json.MarshalIndent(u, "", "  ")
-	fmt.Println("Сериализованный JSON:")
-	fmt.Println(string(data))
+	fmt.Fprintln(out, "Сериализованный JSON:")
+	fmt.Fprintln(out, string(data))
 
-	raw := `{"id":2,"name":"Bob","email":"bob@example.com","join_date":"2026-01-01"}`
 	var u2 User
 	if err := json.Unmarshal([]byte(raw), &u2); err != nil {
-		fmt.Println("ошибка:", err)
-		return
+		return err
 	}
-	fmt.Printf("Десериализованный: %+v\n", u2)
+	fmt.Fprintf(out, "Десериализованный: %+v\n", u2)
+	return nil
+}
+
+func main() {
+	raw := `{"id":2,"name":"Bob","email":"bob@example.com","join_date":"2026-01-01"}`
+	if err := demo(os.Stdout, raw); err != nil {
+		log.Println("ошибка:", err)
+	}
 }

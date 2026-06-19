@@ -175,6 +175,87 @@ func TestOpenAddrResize(t *testing.T) {
 	}
 }
 
+func TestMustHashPanicsOnBadKey(t *testing.T) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Error("ожидали панику при неподдерживаемом типе ключа")
+		}
+	}()
+	NewHashMapChaining(8).Put(3.14, "плохой ключ") // float -> mustHash паникует
+}
+
+func TestDefaultCapacity(t *testing.T) {
+	if c := NewHashMapChaining(0).Capacity(); c != 8 {
+		t.Errorf("NewHashMapChaining(0).Capacity() = %d, want 8", c)
+	}
+	if c := NewHashMapChaining(-1).Capacity(); c != 8 {
+		t.Errorf("NewHashMapChaining(-1).Capacity() = %d, want 8", c)
+	}
+	if c := NewHashMapOpenAddr(0, ProbeLinear).Capacity(); c != 8 {
+		t.Errorf("NewHashMapOpenAddr(0).Capacity() = %d, want 8", c)
+	}
+}
+
+// containsKey проверяет наличие ключа в срезе ключей (порядок не фиксирован).
+func containsKey(keys []any, key any) bool {
+	for _, k := range keys {
+		if k == key {
+			return true
+		}
+	}
+	return false
+}
+
+func TestKeysAndItems(t *testing.T) {
+	for name, factory := range maps() {
+		t.Run(name, func(t *testing.T) {
+			m := factory()
+			want := map[any]any{1: "один", "two": 2, 3: 3.0}
+			for k, v := range want {
+				m.Put(k, v)
+			}
+
+			var keys []any
+			var items []Pair
+			switch tbl := m.(type) {
+			case *HashMapChaining:
+				keys, items = tbl.Keys(), tbl.Items()
+			case *HashMapOpenAddr:
+				keys, items = tbl.Keys(), tbl.Items()
+			}
+
+			if len(keys) != len(want) {
+				t.Errorf("Keys() = %v, want %d ключей", keys, len(want))
+			}
+			for k := range want {
+				if !containsKey(keys, k) {
+					t.Errorf("Keys() не содержит %v", k)
+				}
+			}
+			if len(items) != len(want) {
+				t.Errorf("Items() = %v, want %d пар", items, len(want))
+			}
+			for _, p := range items {
+				if want[p.Key] != p.Value {
+					t.Errorf("Items() пара %v = %v, want %v", p.Key, p.Value, want[p.Key])
+				}
+			}
+		})
+	}
+}
+
+func TestOpenAddrLoadFactor(t *testing.T) {
+	m := NewHashMapOpenAddr(8, ProbeLinear)
+	if lf := m.LoadFactor(); lf != 0 {
+		t.Errorf("LoadFactor пустой таблицы = %v, want 0", lf)
+	}
+	m.Put(1, "a")
+	m.Put(2, "b")
+	if lf := m.LoadFactor(); lf != 0.25 { // 2 / 8
+		t.Errorf("LoadFactor = %v, want 0.25", lf)
+	}
+}
+
 func TestOpenAddrTombstoneReuse(t *testing.T) {
 	m := NewHashMapOpenAddr(8, ProbeLinear)
 	m.Put(1, 10) // слот 1

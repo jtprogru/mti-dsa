@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"net"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -57,5 +58,20 @@ func TestRunGracefulShutdown(t *testing.T) {
 		}
 	case <-time.After(2 * time.Second):
 		t.Fatal("run не завершился после отмены контекста")
+	}
+}
+
+func TestRunListenError(t *testing.T) {
+	// Занимаем порт, затем поднимаем сервер на том же адресе — ListenAndServe
+	// сразу вернёт ошибку «address already in use», которая дойдёт через errCh.
+	ln, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer ln.Close()
+
+	srv := newServer(ln.Addr().String())
+	if err := run(context.Background(), srv); err == nil {
+		t.Error("ожидали ошибку run: адрес уже занят")
 	}
 }
