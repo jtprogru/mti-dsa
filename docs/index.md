@@ -3,7 +3,7 @@ hide:
   - navigation
 ---
 
-# dsa-for-ops
+# dsa-for-ops – Алгоритмы и структуры данных для эксплуатации
 
 База для будущих **SRE / DevOps / Ops**, которые хотят вырасти из bash-скриптов в инженеров-программистов. Репозиторий объединяет три направления:
 
@@ -17,31 +17,31 @@ hide:
 
 <div class="grid cards" markdown>
 
--   :material-sitemap-outline:{ .lg .middle } &nbsp; __[DSA](dsa.md)__
+-   :material-sitemap-outline:{ .lg .middle } &nbsp; **[DSA](dsa.md)**
 
     ---
 
     Структуры данных и алгоритмы «с нуля»: академические `lab01`–`lab05` (массив, стек, список, дерево, сортировки, поиск, hash map) и прикладные расширения `lab00`, `lab06`–`lab11` (графы, куча, LRU-кэш, rate limiting, разбор логов, consistent hashing).
 
--   :material-school-outline:{ .lg .middle } &nbsp; __[Основы](foundations/01-algorithm-basics/index.md)__
+-   :material-school-outline:{ .lg .middle } &nbsp; **[Основы](foundations/01-algorithm-basics/index.md)**
 
     ---
 
     Темы 01–09: алгоритмизация, языки и методы, основы Python, процедуры и файлы, библиотеки и модули, ООП, IDE, этапы разработки, иерархия классов.
 
--   :material-server-network:{ .lg .middle } &nbsp; __[Эксплуатация](ops/10-standard-modules/index.md)__
+-   :material-server-network:{ .lg .middle } &nbsp; **[Эксплуатация](ops/10-standard-modules/index.md)**
 
     ---
 
     Темы 10–12: стандартные модули (HTTP, regex, SQLite, конкурентность), разработка приложений (логирование, Django, standalone), качество кода и тестирование.
 
--   :fontawesome-brands-golang:{ .lg .middle } &nbsp; __[Go](go/13-golang-basics/index.md)__
+-   :fontawesome-brands-golang:{ .lg .middle } &nbsp; **[Go](go/13-golang-basics/index.md)**
 
     ---
 
     Темы 13–14: основы Go и продвинутый трек — конкурентность, `context`, `net/http`, файлы/JSON/БД, бенчмарки и pprof.
 
--   :material-flask-outline:{ .lg .middle } &nbsp; __[Практика](practice/index.md)__
+-   :material-flask-outline:{ .lg .middle } &nbsp; **[Практика](practice/index.md)**
 
     ---
 
